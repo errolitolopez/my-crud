@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: simple-crud
+  profiles:
+    active: ${PROFILE:dev}
+
+server:
+  port: ${PORT:8090}
+
+logging:
+  level:
+    root: INFO
