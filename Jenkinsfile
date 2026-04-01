@@ -20,8 +20,8 @@ pipeline {
 		stage('2. Deploy via Compose') {
 			steps {
 				sh """
-					docker compose -f compose.yml down
-					docker compose -f compose.yml up -d --build
+					docker compose -f app.yml down
+					docker compose -f app.yml up -d --build
                 """
 			}
 		}
