@@ -1,51 +1,10 @@
 services:
-  # 1. Postgres
-  postgres:
-    image: postgres:17
-    restart: unless-stopped
-    environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: 123qwe
-      POSTGRES_DB: my_db
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    networks:
-      - my-network
-
-# 2. Jenkins
-  jenkins:
-    image: jenkins/jenkins:latest
-    restart: unless-stopped
-    user: root
-    privileged: true
-    ports:
-      - "8080:8080"
-      - "50000:50000"
-    volumes:
-      - jenkins_home:/var/jenkins_home
-      - /var/run/docker.sock:/var/run/docker.sock
-    networks:
-      - my-network
-    command: >
-      bash -c "apt-get update &&
-               apt-get install -y ca-certificates curl gnupg &&
-               install -m 0755 -d /etc/apt/keyrings &&
-               curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg &&
-               chmod a+r /etc/apt/keyrings/docker.gpg &&
-               echo 'deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian bookworm stable' > /etc/apt/sources.list.d/docker.list &&
-               apt-get update &&
-               apt-get install -y docker-ce-cli docker-compose-plugin &&
-               chmod 666 /var/run/docker.sock &&
-               exec /usr/local/bin/jenkins.sh"
-
-  # 3. Spring Boot App (Instance 1)
-  my-crud-8091:
+  my-crud-app-1:
+    container_name: my-crud-app-1
     build:
       context: .
       dockerfile: Dockerfile
-    image: my-crud:latest
+    image: my-crud-app:latest
     restart: unless-stopped
     ports:
       - "8091:8080"
@@ -54,14 +13,15 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/my_db
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: 123qwe
-    depends_on:
-      - postgres
     networks:
-      - my-network
+      - mycrud_my-network
 
-  # 4. Spring Boot App (Instance 2)
-  my-crud-8092:
-    image: my-crud:latest
+  my-crud-app-2:
+    container_name: my-crud-app-2
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: my-crud-app:latest
     restart: unless-stopped
     ports:
       - "8092:8080"
@@ -70,29 +30,9 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/my_db
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: 123qwe
-    depends_on:
-      - postgres
     networks:
-      - my-network
-
-  # 5. NGINX
-  nginx:
-    image: nginx:latest
-    restart: unless-stopped
-    ports:
-      - "80:80"
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
-    depends_on:
-      - my-crud-8091
-      - my-crud-8092
-    networks:
-      - my-network
-
-volumes:
-  jenkins_home:
-  postgres_data:
+      - mycrud_my-network
 
 networks:
-  my-network:
-    driver: bridge
+  mycrud_my-network:
+    external: true

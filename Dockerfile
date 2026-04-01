@@ -1,5 +1,5 @@
 # Build
-FROM maven:3.9.11-eclipse-temurin-21-alpine AS build
+FROM maven:3.9.14-eclipse-temurin-21 AS build
 WORKDIR /app
 
 # Cache dependencies
@@ -11,7 +11,7 @@ COPY src ./src
 RUN mvn clean package -DskipTests
 
 # Run the application
-FROM eclipse-temurin:21-jre-alpine
+FROM eclipse-temurin:21
 
 WORKDIR /app
 
