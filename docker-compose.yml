@@ -2,7 +2,6 @@ services:
   # 1. Postgres
   postgres:
     image: postgres:17
-    container_name: postgres
     restart: unless-stopped
     environment:
       POSTGRES_USER: root
@@ -18,7 +17,6 @@ services:
 # 2. Jenkins
   jenkins:
     image: jenkins/jenkins:latest
-    container_name: jenkins
     restart: unless-stopped
     user: root
     privileged: true
@@ -48,7 +46,6 @@ services:
       context: .
       dockerfile: Dockerfile
     image: my-crud:latest
-    container_name: my-crud-8091
     restart: unless-stopped
     ports:
       - "8091:8080"
@@ -65,7 +62,6 @@ services:
   # 4. Spring Boot App (Instance 2)
   my-crud-8092:
     image: my-crud:latest
-    container_name: my-crud-8092
     restart: unless-stopped
     ports:
       - "8092:8080"
@@ -82,7 +78,6 @@ services:
   # 5. NGINX
   nginx:
     image: nginx:latest
-    container_name: nginx
     restart: unless-stopped
     ports:
       - "80:80"
