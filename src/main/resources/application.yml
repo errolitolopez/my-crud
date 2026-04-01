@@ -5,8 +5,25 @@ spring:
     active: ${PROFILE:dev}
 
 server:
-  port: ${PORT:8090}
+  port: ${PORT:8080}
+
+instance:
+  port: ${INSTANCE_PORT:unknown}
 
 logging:
   level:
     root: INFO
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+  info:
+    java:
+      enabled: true
+    build:
+      enabled: true
