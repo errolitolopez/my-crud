@@ -2,7 +2,7 @@ pipeline {
 	agent any
 
 	environment {
-		IMAGE_NAME = 'my-crud'
+		IMAGE_NAME = 'my-crud-app'
 	}
 
 	stages {
