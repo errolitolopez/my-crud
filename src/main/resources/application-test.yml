@@ -1,0 +1,23 @@
+spring:
+  datasource:
+    url: jdbc:h2:file:./data/h2;
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    defer-datasource-initialization: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        show_sql: true
+  sql:
+    init:
+      data-locations: classpath:db/migration/V2__init_dml.sql
+      mode: always
+  flyway:
+    enabled: false
+
+logging:
+  level:
+    com.errolito.mycrud: DEBUG
