@@ -7,6 +7,8 @@ A simple CRUD application built with Spring Boot.
 - **Java** 21
 - **Spring Boot** 4.0.5
 - **Database** PostgreSQL
+- **CI/CD** Jenkins
+- **Load Balancing** Nginx
 
 ## Prerequisites
 
@@ -33,3 +35,32 @@ The application will be available at `http://localhost:8100`.
 ## API Documentation (Swagger)
 
 After starting the app, you can access Swagger UI here: `http://localhost:8100/swagger-ui.html`
+
+## Jenkins
+
+The application will be available at `http://localhost:8080`.
+
+Create a pipeline setup config then execute build now (No GitHub hit)
+
+For actual CI/CD test:
+- **ngrok** to serve localhost on web
+- create user token from Jenkins
+- Github webhooks config
+
+Sample webook:
+`https://root:<token-from-jenkins>@<your-ngork-url>/github-webhook/`
+
+## Verify Load Balancing
+
+Access `http://localhost/actuator/health/instancePort`
+
+```json
+{
+  "details": {
+    "port": "8100"
+  },
+  "status": "UP"
+}
+```
+
+The port should switch to:  `8100, 8101, 8102`

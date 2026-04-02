@@ -23,6 +23,40 @@ services:
     networks:
       - my-network
 
+  my-crud-1:
+    container_name: my-crud-1
+    image: my-crud:${BUILD_NUMBER:-latest}
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "8101:8080"
+    environment:
+      INSTANCE_PORT: 8101
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/my_db
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 123qwe
+    networks:
+      - my-network
+
+  my-crud-2:
+    container_name: my-crud-2
+    image: my-crud:${BUILD_NUMBER:-latest}
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "8102:8080"
+    environment:
+      INSTANCE_PORT: 8102
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/my_db
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 123qwe
+    networks:
+      - my-network
+
 networks:
   my-network:
     name: my-network
