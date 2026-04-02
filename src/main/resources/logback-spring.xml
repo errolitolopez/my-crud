@@ -11,6 +11,11 @@
                     <fieldName>timestamp</fieldName>
                 </timestamp>
 
+                <mdc>
+                    <includeMdcKeyName>traceId</includeMdcKeyName>
+                    <includeMdcKeyName>spanId</includeMdcKeyName>
+                </mdc>
+
                 <threadName>
                     <fieldName>thread</fieldName>
                 </threadName>
