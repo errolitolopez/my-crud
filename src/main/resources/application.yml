@@ -7,6 +7,9 @@ spring:
 server:
   port: ${PORT:8080}
 
+instance:
+  port: ${INSTANCE_PORT}
+
 logging:
   level:
     root: INFO
