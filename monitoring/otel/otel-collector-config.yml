@@ -13,7 +13,7 @@ exporters:
     tls:
       insecure: true
 
-  # Export metrics so Prometheus can "scrape" them
+  # Export metrics to Prometheus
   prometheus:
     endpoint: 0.0.0.0:8889
 

@@ -58,11 +58,14 @@ services:
       - my-network
 
   jaeger:
-    image: jaegertracing/all-in-one:latest
+    image: jaegertracing/jaeger:2.17.0
     container_name: jaeger
     restart: unless-stopped
     ports:
       - "16686:16686"
+    volumes:
+      - jaeger_data:/badger
+      - ./monitoring/jaeger/tmp:/tmp
     networks:
       - my-network
 
@@ -71,7 +74,7 @@ services:
     container_name: otel-collector
     restart: unless-stopped
     volumes:
-      - ./otel-collector-config.yml:/etc/otel-collector-config.yml
+      - ./monitoring/otel/otel-collector-config.yml:/etc/otel-collector-config.yml
     command: [ "--config=/etc/otel-collector-config.yml" ]
     ports:
       - "4317:4317"
@@ -86,15 +89,58 @@ services:
     container_name: prometheus
     restart: unless-stopped
     volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
     ports:
       - "9090:9090"
+    networks:
+      - my-network
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: root
+      GF_SECURITY_ADMIN_PASSWORD: 123qwe
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning
+    networks:
+      - my-network
+    depends_on:
+      - prometheus
+      - jaeger
+
+  loki:
+    image: grafana/loki:latest
+    container_name: loki
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - my-network
+
+  promtail:
+    image: grafana/promtail:latest
+    container_name: promtail
+    volumes:
+      - ./monitoring/promtail/promtail-config.yml:/etc/promtail/promtail-config.yml
+      - /var/log:/var/log:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: -config.file=/etc/promtail/promtail-config.yml
     networks:
       - my-network
 
 volumes:
   postgres_data:
   jenkins_home:
+  jaeger_data:
+  prometheus_data:
+  grafana_data:
 
 networks:
   my-network:
