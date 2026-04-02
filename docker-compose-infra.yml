@@ -57,6 +57,41 @@ services:
     networks:
       - my-network
 
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: jaeger
+    restart: unless-stopped
+    ports:
+      - "16686:16686"
+    networks:
+      - my-network
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:latest
+    container_name: otel-collector
+    restart: unless-stopped
+    volumes:
+      - ./otel-collector-config.yml:/etc/otel-collector-config.yml
+    command: [ "--config=/etc/otel-collector-config.yml" ]
+    ports:
+      - "4317:4317"
+      - "4318:4318"
+    networks:
+      - my-network
+    depends_on:
+      - jaeger
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    restart: unless-stopped
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    networks:
+      - my-network
+
 volumes:
   postgres_data:
   jenkins_home:

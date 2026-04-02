@@ -1,5 +1,6 @@
 package com.errolito.mycrud.shared;
 
+import io.micrometer.tracing.annotation.NewSpan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -28,6 +29,7 @@ public abstract class BaseCrudServiceImpl
     protected abstract Specification<ENTITY> buildEqualSpec(QUERY query);
 
     @Override
+    @NewSpan
     public ENTITY save(ENTITY entity) {
         ENTITY saved = repository.save(entity);
         log.info("Entity saved successfully");
@@ -35,28 +37,33 @@ public abstract class BaseCrudServiceImpl
     }
 
     @Override
+    @NewSpan
     public void delete(ENTITY entity) {
         repository.delete(entity);
         log.info("Entity deleted");
     }
 
     @Override
+    @NewSpan
     public void deleteById(ID id) {
         repository.deleteById(id);
         log.info("Entity with ID {} deleted", id);
     }
 
     @Override
+    @NewSpan
     public Optional<ENTITY> findById(ID id) {
         return repository.findById(id);
     }
 
     @Override
+    @NewSpan
     public ENTITY getById(ID id) {
         return repository.getReferenceById(id);
     }
 
     @Override
+    @NewSpan
     public ENTITY getById(ID id, Supplier<RuntimeException> exception) {
         return repository.findById(id).orElseThrow(() -> {
             log.error("Entity ID {} not found", id);
@@ -65,6 +72,7 @@ public abstract class BaseCrudServiceImpl
     }
 
     @Override
+    @NewSpan
     public Page<ENTITY> findAll(QUERY query, Pageable pageable) {
         Page<ENTITY> page = repository.findAll(buildLikeSpec(query), pageable);
         log.debug("Found {} records", page.getTotalElements());
@@ -72,21 +80,25 @@ public abstract class BaseCrudServiceImpl
     }
 
     @Override
+    @NewSpan
     public boolean existsById(ID id) {
         return repository.existsById(id);
     }
 
     @Override
+    @NewSpan
     public long count() {
         return repository.count();
     }
 
     @Override
+    @NewSpan
     public long countByQuery(QUERY query) {
         return repository.count(buildLikeSpec(query));
     }
 
     @Override
+    @NewSpan
     public boolean existsByQuery(QUERY query) {
         return repository.exists(buildEqualSpec(query));
     }

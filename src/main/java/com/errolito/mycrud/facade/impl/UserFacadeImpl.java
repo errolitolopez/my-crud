@@ -9,6 +9,7 @@ import com.errolito.mycrud.mapper.UserMapper;
 import com.errolito.mycrud.service.UserService;
 import com.errolito.mycrud.shared.BaseCrudFacadeImpl;
 import io.github.uncaughterrol.commons.exception.ExceptionFactory;
+import io.micrometer.tracing.annotation.NewSpan;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +24,7 @@ public class UserFacadeImpl
 
     @Override
     @Transactional
+    @NewSpan
     public UserResponse save(UserRequest userRequest) {
         log.info("Processing save request");
 
@@ -36,6 +38,7 @@ public class UserFacadeImpl
 
     @Override
     @Transactional
+    @NewSpan
     public UserResponse update(Integer id, UserRequest userRequest) {
         log.info("Processing update request");
 

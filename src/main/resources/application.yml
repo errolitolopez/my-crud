@@ -1,6 +1,6 @@
 spring:
   application:
-    name: simple-crud
+    name: my-crud
   profiles:
     active: ${PROFILE:dev}
 
@@ -8,6 +8,8 @@ server:
   port: ${PORT:8080}
 
 logging:
+  pattern:
+    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
   level:
     root: INFO
 
@@ -24,3 +26,21 @@ management:
       enabled: true
     build:
       enabled: true
+  observations:
+    annotations:
+      enabled: true
+  tracing:
+    propagation:
+      type: w3c
+    sampling:
+      probability: 1.0
+  opentelemetry:
+    tracing:
+      export:
+        otlp:
+          endpoint: ${OTEL_TRACES_URL:http://otel-collector:4318/v1/traces}
+  otlp:
+    metrics:
+      export:
+        url: ${OTEL_METRICS_TRACES_URL:http://otel-collector:4318/v1/metrics}
+        step: 5m

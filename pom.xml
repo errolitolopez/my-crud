@@ -34,6 +34,8 @@
         <mapstruct.version>1.6.3</mapstruct.version>
         <postgresql.version>42.7.10</postgresql.version>
         <springdoc-openapi-starter-webmvc-ui.version>3.0.2</springdoc-openapi-starter-webmvc-ui.version>
+        <opentelemetry-jdbc.version>${opentelemetry-instrumentation-annotations.version}-alpha</opentelemetry-jdbc.version>
+        <opentelemetry-instrumentation-annotations.version>2.26.1</opentelemetry-instrumentation-annotations.version>
     </properties>
 
     <dependencies>
@@ -71,6 +73,29 @@
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-database-postgresql</artifactId>
             <version>${flyway.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-opentelemetry</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-tracing-bridge-otel</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.opentelemetry</groupId>
+            <artifactId>opentelemetry-exporter-otlp</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.opentelemetry.instrumentation</groupId>
+            <artifactId>opentelemetry-jdbc</artifactId>
+            <version>${opentelemetry-jdbc.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.opentelemetry.instrumentation</groupId>
+            <artifactId>opentelemetry-instrumentation-annotations</artifactId>
+            <version>${opentelemetry-instrumentation-annotations.version}</version>
         </dependency>
 
         <dependency>

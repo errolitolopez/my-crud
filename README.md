@@ -52,7 +52,13 @@ Sample webook:
 
 ## Verify Load Balancing
 
-Access `http://localhost/actuator/health/instancePort`
+Access `http://localhost/actuator/health/instancePort` 
+
+or
+
+```bash
+curl http://localhost/actuator/health/instancePort
+```
 
 ```json
 {
@@ -64,3 +70,13 @@ Access `http://localhost/actuator/health/instancePort`
 ```
 
 The port should switch to:  `8100, 8101, 8102`
+
+
+## Jaegar (UI)
+
+Access `http://localhost:16686`
+
+
+## Prometheus (UI)
+
+Access `http://localhost:9090`

@@ -6,6 +6,8 @@ import com.errolito.mycrud.repository.UserRepository;
 import com.errolito.mycrud.service.UserService;
 import com.errolito.mycrud.shared.SpecBuilder;
 import com.errolito.mycrud.shared.BaseCrudServiceImpl;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 

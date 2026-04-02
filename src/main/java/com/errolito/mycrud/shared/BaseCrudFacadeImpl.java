@@ -1,5 +1,6 @@
 package com.errolito.mycrud.shared;
 
+import io.micrometer.tracing.annotation.NewSpan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -26,6 +27,7 @@ public abstract class BaseCrudFacadeImpl<ID, QUERY, REQUEST, ENTITY, RESPONSE>
 
     @Override
     @Transactional
+    @NewSpan
     public Page<RESPONSE> findAll(QUERY query, Pageable pageable) {
         return service.findAll(query, pageable)
                 .map(mapper::toResponse);
@@ -33,6 +35,7 @@ public abstract class BaseCrudFacadeImpl<ID, QUERY, REQUEST, ENTITY, RESPONSE>
 
     @Override
     @Transactional
+    @NewSpan
     public Optional<RESPONSE> findById(ID id) {
         return service
                 .findById(id)
@@ -41,12 +44,14 @@ public abstract class BaseCrudFacadeImpl<ID, QUERY, REQUEST, ENTITY, RESPONSE>
 
     @Override
     @Transactional
+    @NewSpan
     public RESPONSE getById(ID id) {
         return mapper.toResponse(service.getById(id));
     }
 
     @Override
     @Transactional
+    @NewSpan
     public RESPONSE save(REQUEST request) {
         log.info("Processing save request");
 
@@ -58,6 +63,7 @@ public abstract class BaseCrudFacadeImpl<ID, QUERY, REQUEST, ENTITY, RESPONSE>
 
     @Override
     @Transactional
+    @NewSpan
     public RESPONSE update(ID id, REQUEST request) {
         log.info("Processing update request");
 
@@ -71,6 +77,7 @@ public abstract class BaseCrudFacadeImpl<ID, QUERY, REQUEST, ENTITY, RESPONSE>
 
     @Override
     @Transactional
+    @NewSpan
     public void deleteById(ID id) {
         log.info("Processing deletion for ID: {}", id);
         service.deleteById(id);
