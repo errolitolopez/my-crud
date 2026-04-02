@@ -28,6 +28,8 @@ public abstract class BaseCrudServiceImpl
 
     protected abstract Specification<ENTITY> buildEqualSpec(QUERY query);
 
+    protected abstract Supplier<RuntimeException> notFoundException();
+
     @Override
     @NewSpan
     public ENTITY save(ENTITY entity) {
@@ -59,7 +61,7 @@ public abstract class BaseCrudServiceImpl
     @Override
     @NewSpan
     public ENTITY getById(ID id) {
-        return repository.getReferenceById(id);
+        return getById(id, notFoundException());
     }
 
     @Override
