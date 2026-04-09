@@ -1,6 +1,3 @@
-alter sequence user_profile_seq increment by 1;
-alter sequence user_seq increment by 1;
-
 insert into user_profiles (full_name)
 values ('Darlena Runte'),
        ('Tamiko Feest'),
@@ -204,6 +201,3 @@ values (1, 'darlena_runte'),
        (98, 'tanika_satterfield'),
        (99, 'dominique_bosco'),
        (100, 'charlie_beer');
-
-alter sequence user_profile_seq increment by 50;
-alter sequence user_seq increment by 50;
