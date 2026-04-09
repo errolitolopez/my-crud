@@ -1,9 +1,11 @@
 package com.errolito.mycrud.shared;
 
 import io.github.uncaughterrol.commons.model.ApiResponse;
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +25,7 @@ public abstract class BaseCrudController<ID, QUERY, REQUEST, RESPONSE>
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<Page<RESPONSE>>> findAll(QUERY query, Pageable pageable) {
+    public ResponseEntity<ApiResponse<Page<RESPONSE>>> findAll(@ParameterObject @Parameter QUERY query, @ParameterObject @Parameter Pageable pageable) {
         log.debug("REST request to get a page of entities");
         return success(facade.findAll(query, pageable));
     }
