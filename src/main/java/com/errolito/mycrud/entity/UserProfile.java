@@ -16,9 +16,7 @@ import java.time.Instant;
 @EntityListeners(AuditingEntityListener.class)
 public class UserProfile {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_profile_seq")
-    @SequenceGenerator(name = "user_profile_seq", sequenceName = "user_profile_seq")
-    @ColumnDefault("nextval('user_profile_seq')")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Column(nullable = false)

@@ -6,10 +6,7 @@ spring:
   jpa:
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-        format_sql: false
-        highlight_sql: false
-        show_sql: false
+        show_sql: true
   flyway:
     enabled: true
     clean-disabled: false
