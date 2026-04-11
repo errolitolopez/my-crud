@@ -17,7 +17,8 @@ pipeline {
 		stage('2. Deploy via Compose') {
 			steps {
 				sh """
-            		BUILD_NUMBER=${BUILD_NUMBER} docker compose up -d --build
+                    export BUILD_NUMBER=${BUILD_NUMBER}
+            		docker compose up -d --build
                 """
 			}
 		}
@@ -36,7 +37,10 @@ pipeline {
 		}
 		failure {
 			echo "Deployment failed"
-			sh "docker compose logs --tail=50"
+
+            sh """
+                docker compose logs --tail=50 || true
+            """
 		}
 	}
 }
