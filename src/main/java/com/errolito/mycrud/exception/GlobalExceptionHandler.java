@@ -9,9 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -32,25 +30,20 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ApiException.class)
     public ResponseEntity<ApiResponse<Void>> handleApiException(ApiException e, HttpServletRequest request) {
-        var params = e.getInvalidParams();
+        Collection<InvalidParam> invalidParams = e.getInvalidParams();
 
-        var status = INTERNAL_SERVER_ERROR;
-
-        if (e instanceof ForbiddenException) {
-            status = FORBIDDEN;
-        } else if (e instanceof ResourceAlreadyExistsException) {
-            status = CONFLICT;
-        } else if (e instanceof ResourceNotFoundException) {
-            status = NOT_FOUND;
-        } else if (e instanceof UnauthorizedException) {
-            status = UNAUTHORIZED;
-        } else if (e instanceof ValidationException) {
-            status = BAD_REQUEST;
-        }
+        HttpStatus status = switch (e) {
+            case ForbiddenException ignored -> FORBIDDEN;
+            case ResourceAlreadyExistsException ignored -> CONFLICT;
+            case ResourceNotFoundException ignored -> NOT_FOUND;
+            case UnauthorizedException ignored -> UNAUTHORIZED;
+            case ValidationException ignored -> BAD_REQUEST;
+            default -> INTERNAL_SERVER_ERROR;
+        };
 
         logException(e, request);
 
-        return status(status).body(ApiResponse.error(e.getTitle(), e.getDetail(), status.value(), params));
+        return status(status).body(ApiResponse.error(e.getTitle(), e.getDetail(), status.value(), invalidParams));
     }
 
     @ExceptionHandler(Exception.class)
@@ -67,11 +60,6 @@ public class GlobalExceptionHandler {
 
             title = "Resource Not Found";
             detail = "The requested resource was not found";
-        } else if (className.equals("AuthorizationDeniedException")) {
-            status = FORBIDDEN;
-
-            title = "Forbidden";
-            detail = "You do not have permission to perform this action";
         } else {
             status = INTERNAL_SERVER_ERROR;
         }
@@ -80,29 +68,6 @@ public class GlobalExceptionHandler {
 
         return status(status).body(ApiResponse.error(title, detail, status.value()));
     }
-
-    @ExceptionHandler(MissingRequestHeaderException.class)
-    public ResponseEntity<ApiResponse<Void>> handleMissingRequestHeaderException(MissingRequestHeaderException e, HttpServletRequest request) {
-        HttpStatus status;
-
-        String title = "Internal Server Error";
-        String detail = "An unexpected error occurred, please try again later";
-
-        status = INTERNAL_SERVER_ERROR;
-
-        String headerName = e.getHeaderName();
-
-        if (StringUtils.hasText(headerName) && headerName.equals("Authorization")) {
-            status = UNAUTHORIZED;
-            title = "Unauthorized";
-            detail = "You do not have permission to perform this action";
-        }
-
-        logException(e, request);
-
-        return status(status).body(ApiResponse.error(title, detail, status.value()));
-    }
-
 
     @ExceptionHandler({
             IllegalArgumentException.class,
@@ -117,29 +82,25 @@ public class GlobalExceptionHandler {
         String title = "Validation Failed";
         String detail = "Request contains one or more invalid parameters";
 
-        Collection<InvalidParam> invalidParams;
-
-        if (e instanceof MethodArgumentNotValidException cause) {
-            invalidParams = getInvalidParams(cause);
-        } else if (e instanceof IllegalArgumentException cause) {
-            invalidParams = getInvalidParams(cause);
-        } else if (e instanceof ConstraintViolationException cause) {
-            invalidParams = getInvalidParams(cause);
-        } else if (e instanceof MethodArgumentTypeMismatchException cause) {
-            invalidParams = Collections.singletonList(
+        Collection<InvalidParam> invalidParams = switch (e) {
+            case MethodArgumentNotValidException cause -> getInvalidParams(cause);
+            case IllegalArgumentException cause -> getInvalidParams(cause);
+            case ConstraintViolationException cause -> getInvalidParams(cause);
+            case MethodArgumentTypeMismatchException cause -> Collections.singletonList(
                     new InvalidParam(cause.getName(), "Invalid input for field " + cause.getName())
             );
-        } else if (e instanceof MissingServletRequestParameterException cause) {
-            invalidParams = Collections.singletonList(
+            case MissingServletRequestParameterException cause -> Collections.singletonList(
                     new InvalidParam(
                             cause.getParameterName(), "Invalid input for field " + cause.getParameterName()
                     )
             );
-        } else {
-            invalidParams = Collections.emptyList();
-        }
+            // null case added as a safeguard to avoid NPE if this handler is called unexpectedly with null
+            case null, default -> Collections.emptyList();
+        };
 
-        logException(e, request);
+        if (e != null) {
+            logException(e, request);
+        }
 
         return status(status).body(ApiResponse.error(title, detail, status.value(), invalidParams));
     }

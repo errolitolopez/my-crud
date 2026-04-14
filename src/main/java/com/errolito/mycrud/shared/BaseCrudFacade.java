@@ -5,16 +5,43 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.Optional;
 
-public interface BaseCrudFacade<ID, QUERY, REQUEST, RESPONSE> {
-    Page<RESPONSE> findAll(QUERY query, Pageable pageable);
+/**
+ * Generic facade contract for CRUD operations.
+ *
+ * @param <I> ID type
+ * @param <Q> Query filter type
+ * @param <R> Request body type
+ * @param <T> Response body type
+ */
+public interface BaseCrudFacade<I, Q, R, T> {
 
-    Optional<RESPONSE> findById(ID id);
+    /**
+     * Fetch paginated results using filter.
+     */
+    Page<T> findAll(Q query, Pageable pageable);
 
-    RESPONSE getById(ID id);
+    /**
+     * Find record by ID. Returns empty if not found.
+     */
+    Optional<T> findById(I id);
 
-    RESPONSE save(REQUEST request);
+    /**
+     * Get record by ID. Throws if not found.
+     */
+    T getById(I id);
 
-    RESPONSE update(ID id, REQUEST request);
+    /**
+     * Create a new record.
+     */
+    T save(R request);
 
-    void deleteById(ID id);
+    /**
+     * Update existing record.
+     */
+    T update(I id, R request);
+
+    /**
+     * Delete record by ID.
+     */
+    void deleteById(I id);
 }

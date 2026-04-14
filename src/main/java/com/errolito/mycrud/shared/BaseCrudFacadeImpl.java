@@ -1,6 +1,5 @@
 package com.errolito.mycrud.shared;
 
-import io.micrometer.tracing.annotation.NewSpan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -9,17 +8,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
-public abstract class BaseCrudFacadeImpl<ID, QUERY, REQUEST, ENTITY, RESPONSE>
-        implements BaseCrudFacade<ID, QUERY, REQUEST, RESPONSE> {
+public abstract class BaseCrudFacadeImpl<I, Q, R, E, T> implements BaseCrudFacade<I, Q, R, T> {
 
     protected final Logger log = LoggerFactory.getLogger(this.getClass());
 
-    protected final BaseMapper<REQUEST, ENTITY, RESPONSE> mapper;
-    protected final BaseCrudService<ID, QUERY, ENTITY> service;
+    protected final BaseMapper<R, E, T> mapper;
+    protected final BaseCrudService<I, Q, E> service;
 
     protected BaseCrudFacadeImpl(
-            BaseMapper<REQUEST, ENTITY, RESPONSE> mapper,
-            BaseCrudService<ID, QUERY, ENTITY> service
+            BaseMapper<R, E, T> mapper,
+            BaseCrudService<I, Q, E> service
     ) {
         this.mapper = mapper;
         this.service = service;
@@ -27,16 +25,14 @@ public abstract class BaseCrudFacadeImpl<ID, QUERY, REQUEST, ENTITY, RESPONSE>
 
     @Override
     @Transactional
-    @NewSpan
-    public Page<RESPONSE> findAll(QUERY query, Pageable pageable) {
+    public Page<T> findAll(Q query, Pageable pageable) {
         return service.findAll(query, pageable)
                 .map(mapper::toResponse);
     }
 
     @Override
     @Transactional
-    @NewSpan
-    public Optional<RESPONSE> findById(ID id) {
+    public Optional<T> findById(I id) {
         return service
                 .findById(id)
                 .map(mapper::toResponse);
@@ -44,42 +40,38 @@ public abstract class BaseCrudFacadeImpl<ID, QUERY, REQUEST, ENTITY, RESPONSE>
 
     @Override
     @Transactional
-    @NewSpan
-    public RESPONSE getById(ID id) {
+    public T getById(I id) {
         return mapper.toResponse(service.getById(id));
     }
 
     @Override
     @Transactional
-    @NewSpan
-    public RESPONSE save(REQUEST request) {
+    public T save(R request) {
         log.info("Processing save request");
 
-        ENTITY entity = mapper.toEntity(request);
-        ENTITY createdEntity = service.save(entity);
+        E entity = mapper.toEntity(request);
+        E createdEntity = service.save(entity);
 
         return mapper.toResponse(createdEntity);
     }
 
     @Override
     @Transactional
-    @NewSpan
-    public RESPONSE update(ID id, REQUEST request) {
+    public T update(I id, R request) {
         log.info("Processing update request");
 
-        ENTITY entity = service.getById(id);
+        E entity = service.getById(id);
         mapper.fromRequest(request, entity);
 
-        ENTITY updatedEntity = service.save(entity);
+        E updatedEntity = service.save(entity);
 
         return mapper.toResponse(updatedEntity);
     }
 
     @Override
     @Transactional
-    @NewSpan
-    public void deleteById(ID id) {
-        log.info("Processing deletion for ID: {}", id);
+    public void deleteById(I id) {
+        log.info("Processing deletion for I: {}", id);
         service.deleteById(id);
     }
 }

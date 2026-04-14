@@ -1,6 +1,5 @@
 package com.errolito.mycrud.shared;
 
-import io.micrometer.tracing.annotation.NewSpan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -12,96 +11,84 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-public abstract class BaseCrudServiceImpl
-        <ID, QUERY, ENTITY, REPOSITORY extends JpaRepository<ENTITY, ID> & JpaSpecificationExecutor<ENTITY>>
-        implements BaseCrudService<ID, QUERY, ENTITY> {
+public abstract class BaseCrudServiceImpl<I, Q, E, D extends JpaRepository<E, I> & JpaSpecificationExecutor<E>>
+        implements BaseCrudService<I, Q, E> {
 
     protected final Logger log = LoggerFactory.getLogger(this.getClass());
 
-    protected final REPOSITORY repository;
+    protected final D repository;
 
-    protected BaseCrudServiceImpl(REPOSITORY repository) {
+    protected BaseCrudServiceImpl(D repository) {
         this.repository = repository;
     }
 
-    protected abstract Specification<ENTITY> buildLikeSpec(QUERY query);
+    protected abstract Specification<E> buildLikeSpec(Q query);
 
-    protected abstract Specification<ENTITY> buildEqualSpec(QUERY query);
+    protected abstract Specification<E> buildEqualSpec(Q query);
 
     protected abstract Supplier<RuntimeException> notFoundException();
 
     @Override
-    @NewSpan
-    public ENTITY save(ENTITY entity) {
-        ENTITY saved = repository.save(entity);
+    public E save(E entity) {
+        E saved = repository.save(entity);
         log.info("Entity saved successfully");
         return saved;
     }
 
     @Override
-    @NewSpan
-    public void delete(ENTITY entity) {
+    public void delete(E entity) {
         repository.delete(entity);
         log.info("Entity deleted");
     }
 
     @Override
-    @NewSpan
-    public void deleteById(ID id) {
+    public void deleteById(I id) {
         repository.deleteById(id);
-        log.info("Entity with ID {} deleted", id);
+        log.info("Entity with I {} deleted", id);
     }
 
     @Override
-    @NewSpan
-    public Optional<ENTITY> findById(ID id) {
+    public Optional<E> findById(I id) {
         return repository.findById(id);
     }
 
     @Override
-    @NewSpan
-    public ENTITY getById(ID id) {
+    public E getById(I id) {
         return getById(id, notFoundException());
     }
 
     @Override
-    @NewSpan
-    public ENTITY getById(ID id, Supplier<RuntimeException> exception) {
+    public E getById(I id, Supplier<RuntimeException> exception) {
         return repository.findById(id).orElseThrow(() -> {
-            log.error("Entity ID {} not found", id);
+            log.error("Entity I {} not found", id);
             return exception.get();
         });
     }
 
     @Override
-    @NewSpan
-    public Page<ENTITY> findAll(QUERY query, Pageable pageable) {
-        Page<ENTITY> page = repository.findAll(buildLikeSpec(query), pageable);
+    public Page<E> findAll(Q query, Pageable pageable) {
+        Page<E> page = repository.findAll(buildLikeSpec(query), pageable);
         log.debug("Found {} records", page.getTotalElements());
         return page;
     }
 
     @Override
-    @NewSpan
-    public boolean existsById(ID id) {
+    public boolean existsById(I id) {
         return repository.existsById(id);
     }
 
     @Override
-    @NewSpan
     public long count() {
         return repository.count();
     }
 
     @Override
-    @NewSpan
-    public long countByQuery(QUERY query) {
+    public long countByQuery(Q query) {
         return repository.count(buildLikeSpec(query));
     }
 
     @Override
-    @NewSpan
-    public boolean existsByQuery(QUERY query) {
+    public boolean existsByQuery(Q query) {
         return repository.exists(buildEqualSpec(query));
     }
 }
