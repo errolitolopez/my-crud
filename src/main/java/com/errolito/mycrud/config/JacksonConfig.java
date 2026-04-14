@@ -21,7 +21,7 @@ public class JacksonConfig {
         };
     }
 
-    public static abstract class ApiResponseMixIn<T> {
+    public abstract static class ApiResponseMixIn<T> {
         @JsonInclude(JsonInclude.Include.NON_EMPTY)
         private T data;
 
