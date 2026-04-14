@@ -2,14 +2,27 @@ package com.errolito.mycrud.shared;
 
 import org.mapstruct.MappingTarget;
 
-import java.util.List;
+/**
+ * Generic mapper contract for converting between Request, Entity, and Response.
+ *
+ * @param <R> Request type
+ * @param <E> Entity type
+ * @param <T> Response type
+ */
+public interface BaseMapper<R, E, T> {
 
-public interface BaseMapper<REQUEST, ENTITY, RESPONSE> {
-    List<ENTITY> toResponses(List<RESPONSE> responses);
+    /**
+     * Convert entity to response DTO.
+     */
+    T toResponse(E entity);
 
-    RESPONSE toResponse(ENTITY ENTITY);
+    /**
+     * Convert request DTO to entity.
+     */
+    E toEntity(R request);
 
-    ENTITY toEntity(REQUEST REQUEST);
-
-    void fromRequest(REQUEST source, @MappingTarget ENTITY target);
+    /**
+     * Copy request values into existing entity.
+     */
+    void fromRequest(R source, @MappingTarget E target);
 }

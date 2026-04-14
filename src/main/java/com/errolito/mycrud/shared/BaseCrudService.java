@@ -6,26 +6,67 @@ import org.springframework.data.domain.Pageable;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-public interface BaseCrudService<ID, QUERY, ENTITY> {
-    ENTITY save(ENTITY entity);
+/**
+ * Generic service contract for CRUD operations.
+ *
+ * @param <I> ID type
+ * @param <Q> Query filter type
+ * @param <E> Entity type
+ */
+public interface BaseCrudService<I, Q, E> {
 
-    void delete(ENTITY entity);
+    /**
+     * Save or update an entity.
+     */
+    E save(E entity);
 
-    void deleteById(ID id);
+    /**
+     * Delete an entity.
+     */
+    void delete(E entity);
 
-    Optional<ENTITY> findById(ID id);
+    /**
+     * Delete entity by ID.
+     */
+    void deleteById(I id);
 
+    /**
+     * Find entity by ID. Returns empty if not found.
+     */
+    Optional<E> findById(I id);
+
+    /**
+     * Count all entities.
+     */
     long count();
 
-    long countByQuery(QUERY query);
+    /**
+     * Count entities using filter.
+     */
+    long countByQuery(Q query);
 
-    ENTITY getById(ID id);
+    /**
+     * Get entity by ID. Throws if not found.
+     */
+    E getById(I id);
 
-    ENTITY getById(ID id, Supplier<RuntimeException> exception);
+    /**
+     * Get entity by ID with custom exception.
+     */
+    E getById(I id, Supplier<RuntimeException> exception);
 
-    Page<ENTITY> findAll(QUERY query, Pageable pageable);
+    /**
+     * Fetch paginated entities using filter.
+     */
+    Page<E> findAll(Q query, Pageable pageable);
 
-    boolean existsById(ID id);
+    /**
+     * Check if entity exists by ID.
+     */
+    boolean existsById(I id);
 
-    boolean existsByQuery(QUERY query);
+    /**
+     * Check if entity exists using filter.
+     */
+    boolean existsByQuery(Q query);
 }

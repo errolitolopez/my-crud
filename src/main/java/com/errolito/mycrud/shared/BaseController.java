@@ -7,7 +7,7 @@ public abstract class BaseController {
     private static final String SUCCESS_TITLE = "Success";
     private static final String SUCCESS_DETAIL = "Operation completed successfully";
 
-    protected <DATA> ResponseEntity<ApiResponse<DATA>> success() {
+    protected <T> ResponseEntity<ApiResponse<T>> success() {
         return ResponseEntity.ok(ApiResponse.success(SUCCESS_TITLE, SUCCESS_DETAIL, 200, null));
     }
 
