@@ -36,6 +36,13 @@
         <springdoc-openapi-starter-webmvc-ui.version>3.0.2</springdoc-openapi-starter-webmvc-ui.version>
         <opentelemetry-jdbc.version>${opentelemetry-instrumentation-annotations.version}-alpha</opentelemetry-jdbc.version>
         <opentelemetry-instrumentation-annotations.version>2.26.1</opentelemetry-instrumentation-annotations.version>
+
+        <sonar.coverage.exclusions>
+            **/config/**,
+            **/dto/**,
+            **/entities/**,
+            **/*Application.java
+        </sonar.coverage.exclusions>
     </properties>
 
     <dependencies>
@@ -212,6 +219,34 @@
                     </path>
                 </annotationProcessorPaths>
             </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.sonarsource.scanner.maven</groupId>
+                <artifactId>sonar-maven-plugin</artifactId>
+                <version>5.5.0.6356</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.12</version>
+
+                <executions>
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+
+                    <execution>
+                        <id>report</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
