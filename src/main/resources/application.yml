@@ -8,7 +8,7 @@ server:
   port: ${PORT:8080}
 
 instance:
-  port: ${INSTANCE_PORT}
+  port: ${INSTANCE_PORT:unknown}
 
 logging:
   level:
