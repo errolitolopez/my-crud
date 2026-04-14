@@ -182,6 +182,8 @@ class BaseCrudFacadeImplTests {
             willDoNothing().given(service).deleteById(EXISTING_ID);
 
             facade.deleteById(EXISTING_ID);
+
+            then(service).should().deleteById(EXISTING_ID);
         }
     }
 

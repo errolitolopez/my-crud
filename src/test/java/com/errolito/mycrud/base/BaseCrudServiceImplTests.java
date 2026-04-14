@@ -195,7 +195,7 @@ class BaseCrudServiceImplTests {
             given(repository.existsById(EXISTING_ID)).willReturn(true);
 
             boolean result = service.existsById(EXISTING_ID);
-            assertThat(result).isEqualTo(true);
+            assertThat(result).isTrue();
         }
 
         @Test
@@ -204,7 +204,7 @@ class BaseCrudServiceImplTests {
             given(repository.existsById(NON_EXISTENT_ID)).willReturn(false);
 
             boolean result = service.existsById(NON_EXISTENT_ID);
-            assertThat(result).isEqualTo(false);
+            assertThat(result).isFalse();
         }
 
         @Test
@@ -213,7 +213,7 @@ class BaseCrudServiceImplTests {
             given(repository.exists(Mockito.<Specification<TestEntity>>any())).willReturn(true);
 
             boolean result = service.existsByQuery(query);
-            assertThat(result).isEqualTo(true);
+            assertThat(result).isTrue();
 
         }
 
@@ -223,7 +223,7 @@ class BaseCrudServiceImplTests {
             given(repository.exists(Mockito.<Specification<TestEntity>>any())).willReturn(false);
 
             boolean result = service.existsByQuery(query);
-            assertThat(result).isEqualTo(false);
+            assertThat(result).isFalse();
         }
     }
 

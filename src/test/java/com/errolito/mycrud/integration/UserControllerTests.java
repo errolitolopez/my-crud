@@ -56,7 +56,7 @@ class UserControllerTests {
     private static final String BASE_URL = "/api/v1/users";
     private static final Integer ID = 1;
 
-    private static String USERNAME = "";
+    private static String username = "";
 
     @Autowired
     UserControllerTests(MockMvc mockMvc, ObjectMapper objectMapper, Faker faker) {
@@ -67,15 +67,15 @@ class UserControllerTests {
 
     @BeforeEach
     void setUp() {
-        USERNAME = faker.name().username();
+        username = faker.name().username();
 
         request = new UserRequest();
-        request.setUsername(USERNAME);
+        request.setUsername(username);
         request.setFullName(faker.name().fullName());
 
         response = new UserResponse();
         response.setId(ID);
-        response.setUsername(USERNAME);
+        response.setUsername(username);
     }
 
     @Nested
@@ -96,7 +96,7 @@ class UserControllerTests {
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.status").value(200))
                     .andExpect(jsonPath("$.data.content", hasSize(1)))
-                    .andExpect(jsonPath("$.data.content[0].username").value(USERNAME))
+                    .andExpect(jsonPath("$.data.content[0].username").value(username))
                     .andExpect(jsonPath("$.data.page.totalElements").value(1));
         }
 
@@ -126,7 +126,7 @@ class UserControllerTests {
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.status").value(200))
                     .andExpect(jsonPath("$.data.id").value(ID))
-                    .andExpect(jsonPath("$.data.username").value(USERNAME));
+                    .andExpect(jsonPath("$.data.username").value(username));
         }
 
         @Test
@@ -153,7 +153,7 @@ class UserControllerTests {
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.status").value(200))
-                    .andExpect(jsonPath("$.data.username").value(USERNAME));
+                    .andExpect(jsonPath("$.data.username").value(username));
         }
     }
 
@@ -170,7 +170,7 @@ class UserControllerTests {
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.status").value(200))
-                    .andExpect(jsonPath("$.data.username").value(USERNAME));
+                    .andExpect(jsonPath("$.data.username").value(username));
         }
     }
 
