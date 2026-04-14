@@ -64,3 +64,15 @@ Access `http://localhost/actuator/health/instancePort`
 ```
 
 The port should switch to:  `8100, 8101, 8102`
+
+## SonarQube (manual)
+```bash
+mvn clean verify sonar:sonar -Dsonar.host.url=http://localhost:9000 -Dsonar.login=sonar_token
+```
+
+## SonarQube actual code analysis
+## Prerequisites
+
+1. Install Sonar plugins in jenkins
+2. Generate Token from SonarQube access localhost:9000
+3. Configure SonarQube in jenkins (Manage Jenkins > System > SonarQube servers)
