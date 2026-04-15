@@ -3,6 +3,18 @@ spring:
     name: simple-crud
   profiles:
     active: ${PROFILE:dev}
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+  freemarker:
+    template-loader-path: classpath:/templates/
+    suffix: .ftl
+    cache: false
+  web:
+    resources:
+      add-mappings: true
 
 server:
   port: ${PORT:8080}
