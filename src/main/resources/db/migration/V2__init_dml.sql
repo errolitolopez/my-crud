@@ -201,3 +201,23 @@ values (1, 'darlena_runte'),
        (98, 'tanika_satterfield'),
        (99, 'dominique_bosco'),
        (100, 'charlie_beer');
+
+INSERT INTO customers (full_name)
+VALUES
+    ('Manual McDermott Abbott'),
+    ('Doreen Aufderhar Klocko'),
+    ('Tori Mayert Welch'),
+    ('Lydia Robel'),
+    ('Shalonda Bernhard Rodriguez'),
+    ('Alissa Muller'),
+    ('Claris Mann'),
+    ('Julius Strosin'),
+    ('Ella Nicolas Kovacek'),
+    ('Willa Boyer Koss');
+
+insert into accounts (account_balance, account_number, account_type, customer_id)
+values (1000, '100054724248', 'SAVINGS', 1),
+       (1000, '100080952227', 'SAVINGS', 2),
+       (1000, '100059966646', 'SAVINGS', 3),
+       (1000, '100069085072', 'SAVINGS', 4),
+       (1000, '100035192457', 'SAVINGS', 5);
