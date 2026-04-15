@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <appender name="CONSOLE_JSON" class="ch.qos.logback.core.ConsoleAppender">
+    <springProperty name="LOGSTASH_HOST" source="logstash.host" defaultValue="logstash"/>
+    <springProperty name="LOGSTASH_PORT" source="logstash.port" defaultValue="5000"/>
+    <appender name="LOGSTASH_TCP" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+        <destination>${LOGSTASH_HOST}:${LOGSTASH_PORT}</destination>
         <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
             <providers>
                 <logLevel>
@@ -31,7 +34,11 @@
         </encoder>
     </appender>
 
+    <appender name="LOGSTASH" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="LOGSTASH_TCP"/>
+    </appender>
+
     <root level="INFO">
-        <appender-ref ref="CONSOLE_JSON"/>
+        <appender-ref ref="LOGSTASH"/>
     </root>
 </configuration>
