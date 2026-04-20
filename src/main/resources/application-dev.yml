@@ -11,6 +11,9 @@ spring:
     enabled: true
     clean-disabled: false
 
+  mongodb:
+    uri: ${SPRING_MONGODB_URI:mongodb://root:123qwe@localhost:27017/my_db?authSource=admin}
+
 logging:
   level:
     com.errolito.mycrud: DEBUG

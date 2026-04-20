@@ -18,6 +18,9 @@ spring:
   flyway:
     enabled: false
 
+  mongodb:
+    uri: mongodb://root:123qwe@localhost:27017/my_db?authSource=admin
+
 logging:
   level:
     com.errolito.mycrud: DEBUG
