@@ -22,4 +22,7 @@ public interface UserRepository extends JpaRepository<User, Integer>, JpaSpecifi
     @NonNull
     @EntityGraph(attributePaths = "userProfile")
     Page<User> findAll(@NonNull Specification<User> spec, @NonNull Pageable pageable);
+
+    @EntityGraph(attributePaths = {"userCredential", "roles", "roles.permissions"})
+    Optional<User> findByUsername(String username);
 }

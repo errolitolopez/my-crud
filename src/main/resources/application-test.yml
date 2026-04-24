@@ -21,3 +21,7 @@ spring:
 logging:
   level:
     com.errolito.mycrud: DEBUG
+
+security:
+  jwt:
+    secret: 3IISQQSIJVQT80CWBCFLK1GAMTXMQ7MYQ8NSMUZT8OELD4ZEVCL820HWSFKLJMKT

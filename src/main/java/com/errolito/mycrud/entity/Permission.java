@@ -9,26 +9,28 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
 @Entity
-@Table(name = "user_profiles")
-@EntityListeners(AuditingEntityListener.class)
+@Table(name = "permissions")
 @ToString(onlyExplicitlyIncluded = true)
-public class UserProfile {
+@EntityListeners(AuditingEntityListener.class)
+public class Permission {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Column(nullable = false)
-    private String fullName;
+    private String name;
 
     @CreatedDate
     @ColumnDefault("NOW()")
     @Column(nullable = false, insertable = false, updatable = false)
     private Instant createdDate;
 
-    @OneToOne(mappedBy = "userProfile")
-    private User user;
+    @ManyToMany(mappedBy = "permissions", fetch = FetchType.LAZY)
+    private Set<Role> roles = new HashSet<>();
 }

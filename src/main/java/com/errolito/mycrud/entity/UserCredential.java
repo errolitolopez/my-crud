@@ -13,22 +13,22 @@ import java.time.Instant;
 @Getter
 @Setter
 @Entity
-@Table(name = "user_profiles")
-@EntityListeners(AuditingEntityListener.class)
+@Table(name = "user_credentials")
 @ToString(onlyExplicitlyIncluded = true)
-public class UserProfile {
+@EntityListeners(AuditingEntityListener.class)
+public class UserCredential {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Column(nullable = false)
-    private String fullName;
+    private String encodedPassword;
 
     @CreatedDate
     @ColumnDefault("NOW()")
     @Column(nullable = false, insertable = false, updatable = false)
     private Instant createdDate;
 
-    @OneToOne(mappedBy = "userProfile")
+    @OneToOne(mappedBy = "userCredential")
     private User user;
 }

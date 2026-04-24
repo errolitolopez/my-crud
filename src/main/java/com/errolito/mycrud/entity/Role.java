@@ -16,43 +16,37 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
-@Table(name = "users")
-@EntityListeners(AuditingEntityListener.class)
+@Table(name = "roles")
 @ToString(onlyExplicitlyIncluded = true)
-public class User {
+@EntityListeners(AuditingEntityListener.class)
+public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(nullable = false, unique = true)
-    private String username;
+    @Column(nullable = false)
+    private String name;
 
     @CreatedDate
     @ColumnDefault("NOW()")
     @Column(nullable = false, insertable = false, updatable = false)
     private Instant createdDate;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "user_profile_id", foreignKey = @ForeignKey(name = "fk_user_profile_id"))
-    private UserProfile userProfile;
-
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "user_credential_id", foreignKey = @ForeignKey(name = "fk_user_credential_id"))
-    private UserCredential userCredential;
-
-
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-            name = "user_roles",
+            name = "role_permissions",
             joinColumns = @JoinColumn(
-                    name = "user_id",
-                    foreignKey = @ForeignKey(name = "fk_user_roles_user_id")
+                    name = "role_id",
+                    foreignKey = @ForeignKey(name = "fk_role_permissions_role_id")
             ),
             inverseJoinColumns = @JoinColumn(
-                    name = "role_id",
-                    foreignKey = @ForeignKey(name = "fk_user_roles_role_id")
+                    name = "permission_id",
+                    foreignKey = @ForeignKey(name = "fk_role_permissions_permission_id")
             )
     )
-    @BatchSize(size = 50)
-    private Set<Role> roles = new HashSet<>();
+    @BatchSize(size = 20)
+    private Set<Permission> permissions = new HashSet<>();
+
+    @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
+    private Set<User> users = new HashSet<>();
 }
