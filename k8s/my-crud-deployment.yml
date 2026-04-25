@@ -1,0 +1,31 @@
+# docker build -t my-crud:latest .
+# kubectl apply -f k8s/
+# kubectl port-forward svc/my-crud 8080:8080
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-crud
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: my-crud
+  template:
+    metadata:
+      labels:
+        app: my-crud
+    spec:
+      containers:
+        - name: my-crud
+          image: my-crud:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://postgres:5432/my_db
+            - name: SPRING_DATASOURCE_USERNAME
+              value: root
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: 123qwe
