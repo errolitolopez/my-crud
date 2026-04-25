@@ -1,5 +1,6 @@
 package com.errolito.mycrud.integration;
 
+import com.errolito.mycrud.cache.CacheConfig;
 import com.errolito.mycrud.dto.UserQuery;
 import com.errolito.mycrud.dto.UserRequest;
 import com.errolito.mycrud.dto.UserResponse;
@@ -20,6 +21,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Optional;
 
@@ -58,6 +60,7 @@ class UserFacadeImplTests {
 
     @BeforeEach
     void setUp() {
+        ReflectionTestUtils.setField(facade, "cacheConfig", new CacheConfig("user", false));
         fullName = faker.name().fullName();
 
         username = generateUsername();

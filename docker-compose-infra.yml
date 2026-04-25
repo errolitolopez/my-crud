@@ -32,8 +32,21 @@ services:
     networks:
       - my-network
 
+  redis:
+    container_name: redis
+    image: redis:7
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - my-network
+    command: ["redis-server", "--appendonly", "yes"]
+
 volumes:
   postgres_data:
+  redis_data:
 
 networks:
   my-network:

@@ -156,7 +156,7 @@ class UserControllerTests {
     }
 
     @Nested
-    @DisplayName("PUT /api/v1/users")
+    @DisplayName("PUT /api/v1/users/{id}")
     class Update {
         @Test
         @DisplayName("200 — valid request returns updated response")
