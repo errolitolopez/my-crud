@@ -1,6 +1,7 @@
 package com.errolito.mycrud.base;
 
 import com.errolito.mycrud.base.BaseCrudServiceImplTests.*;
+import com.errolito.mycrud.cache.CacheStore;
 import com.errolito.mycrud.shared.BaseCrudFacade;
 import com.errolito.mycrud.shared.BaseCrudFacadeImpl;
 import com.errolito.mycrud.shared.BaseMapper;
@@ -191,8 +192,8 @@ class BaseCrudFacadeImplTests {
     static class TestFacadeImpl
             extends BaseCrudFacadeImpl<Long, TestQuery, TestRequest, TestEntity, TestResponse>
             implements TestFacade {
-        protected TestFacadeImpl(TestMapper mapper, TestService service) {
-            super(mapper, service);
+        protected TestFacadeImpl(TestMapper mapper, TestService service, CacheStore<TestResponse> cacheStore) {
+            super(mapper, service, cacheStore);
         }
     }
 

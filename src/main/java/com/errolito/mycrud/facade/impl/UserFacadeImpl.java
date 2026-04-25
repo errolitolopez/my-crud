@@ -1,5 +1,7 @@
 package com.errolito.mycrud.facade.impl;
 
+import com.errolito.mycrud.cache.CacheConfig;
+import com.errolito.mycrud.cache.CacheStore;
 import com.errolito.mycrud.dto.UserQuery;
 import com.errolito.mycrud.dto.UserRequest;
 import com.errolito.mycrud.dto.UserResponse;
@@ -17,8 +19,15 @@ public class UserFacadeImpl
         extends BaseCrudFacadeImpl<Integer, UserQuery, UserRequest, User, UserResponse>
         implements UserFacade {
 
-    protected UserFacadeImpl(UserMapper mapper, UserService service) {
-        super(mapper, service);
+    protected UserFacadeImpl(UserMapper mapper, UserService service, CacheStore<UserResponse> cacheStore) {
+        super(mapper, service, cacheStore);
+    }
+
+    private final CacheConfig cacheConfig = new CacheConfig("user", true);
+
+    @Override
+    protected CacheConfig cacheConfig() {
+        return cacheConfig;
     }
 
     @Override
