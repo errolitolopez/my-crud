@@ -5,7 +5,7 @@ A simple CRUD application built with Spring Boot.
 ## Tech Stack
 
 - **Java** 21
-- **Spring Boot** 4.0.5
+- **Spring Boot** 4
 - **Database** PostgreSQL
 
 ## Prerequisites
