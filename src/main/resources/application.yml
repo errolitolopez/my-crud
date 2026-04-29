@@ -14,3 +14,17 @@ server:
 logging:
   level:
     root: INFO
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+  info:
+    java:
+      enabled: true
+    build:
+      enabled: true
