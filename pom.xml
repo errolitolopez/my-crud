@@ -34,6 +34,7 @@
         <mapstruct.version>1.6.3</mapstruct.version>
         <postgresql.version>42.7.10</postgresql.version>
         <springdoc-openapi-starter-webmvc-ui.version>3.0.2</springdoc-openapi-starter-webmvc-ui.version>
+        <s3.version>2.42.18</s3.version>
     </properties>
 
     <dependencies>
@@ -72,7 +73,11 @@
             <artifactId>flyway-database-postgresql</artifactId>
             <version>${flyway.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>s3</artifactId>
+            <version>${s3.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>

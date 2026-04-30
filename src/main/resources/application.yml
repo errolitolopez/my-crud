@@ -24,3 +24,8 @@ management:
       enabled: true
     build:
       enabled: true
+
+aws:
+  region: ap-southeast-2
+  s3:
+    bucket-name: amzn-s3-my-crud-bucket
