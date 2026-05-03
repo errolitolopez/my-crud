@@ -35,8 +35,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ActiveProfiles("test")
-@AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureMockMvc
 class UserControllerTests {
 
     private final MockMvc mockMvc;
@@ -156,7 +156,7 @@ class UserControllerTests {
     }
 
     @Nested
-    @DisplayName("PUT /api/v1/users/{id}")
+    @DisplayName("PUT /api/v1/users")
     class Update {
         @Test
         @DisplayName("200 — valid request returns updated response")
