@@ -1,15 +1,9 @@
 package com.errolito.mycrud.integration;
 
-import com.errolito.mycrud.config.FakerConfig;
-import com.errolito.mycrud.config.WebConfig;
-import com.errolito.mycrud.controller.UserController;
 import com.errolito.mycrud.dto.UserQuery;
 import com.errolito.mycrud.dto.UserRequest;
 import com.errolito.mycrud.dto.UserResponse;
-import com.errolito.mycrud.exception.GlobalExceptionHandler;
 import com.errolito.mycrud.facade.UserFacade;
-import com.errolito.mycrud.security.CustomUserDetailsService;
-import com.errolito.mycrud.security.JwtAuthFilter;
 import com.github.javafaker.Faker;
 import io.github.uncaughterrol.commons.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,14 +11,14 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
-import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import tools.jackson.databind.ObjectMapper;
@@ -40,9 +34,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@AutoConfigureMockMvc(addFilters = false)
-@WebMvcTest(UserController.class)
-@Import(value = {GlobalExceptionHandler.class, WebConfig.class, FakerConfig.class})
+@ActiveProfiles("test")
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureMockMvc
 class UserControllerTests {
 
     private final MockMvc mockMvc;
@@ -53,12 +47,6 @@ class UserControllerTests {
 
     @MockitoBean
     private UserFacade facade;
-
-    @MockitoBean
-    private JwtAuthFilter jwtAuthFilter;
-
-    @MockitoBean
-    private CustomUserDetailsService userDetailsService;
 
     private UserResponse response;
     private UserRequest request;
