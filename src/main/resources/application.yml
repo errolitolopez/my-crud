@@ -3,6 +3,10 @@ spring:
     name: simple-crud
   profiles:
     active: ${PROFILE:dev}
+  freemarker:
+    template-loader-path: classpath:/templates/
+    suffix: .ftl
+    cache: false
 
 server:
   port: ${PORT:8080}
