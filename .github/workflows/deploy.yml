@@ -41,6 +41,7 @@ jobs:
           jq '(.containerDefinitions[].environment[] | select(.name == "SPRING_DATASOURCE_URL")).value = "${{ secrets.SPRING_DATASOURCE_URL }}"' .aws/task-definition.json > tmp.json && mv tmp.json .aws/task-definition.json
           jq '(.containerDefinitions[].environment[] | select(.name == "SPRING_DATASOURCE_USERNAME")).value = "${{ secrets.SPRING_DATASOURCE_USERNAME }}"' .aws/task-definition.json > tmp.json && mv tmp.json .aws/task-definition.json
           jq '(.containerDefinitions[].environment[] | select(.name == "SPRING_DATASOURCE_PASSWORD")).value = "${{ secrets.SPRING_DATASOURCE_PASSWORD }}"' .aws/task-definition.json > tmp.json && mv tmp.json .aws/task-definition.json
+          jq '(.containerDefinitions[].environment[] | select(.name == "GEMINI_API_KEY")).value = "${{ secrets.GEMINI_API_KEY }}"' .aws/task-definition.json > tmp.json && mv tmp.json .aws/task-definition.json
 
       - name: Login to Amazon ECR
         id: login-ecr
