@@ -3,10 +3,25 @@ spring:
     name: simple-crud
   profiles:
     active: ${PROFILE:dev}
+  ai:
+    ollama:
+      base-url: http://localhost:11434
+      chat:
+        options:
+          temperature: 1
+          num-ctx: 4096
+    chat:
+      memory:
+        repository:
+          jdbc:
+            initialize-schema: never
   freemarker:
     template-loader-path: classpath:/templates/
     suffix: .ftl
     cache: false
+  web:
+    resources:
+      add-mappings: true
 
 server:
   port: ${PORT:8080}

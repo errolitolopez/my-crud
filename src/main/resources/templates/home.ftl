@@ -22,6 +22,7 @@
         <div class="col-12">
             <ul class="list-group">
                 <a href="/users" class="list-group-item list-group-item-action">Users</a>
+                <a href="/spring-ai/chat" class="list-group-item list-group-item-action">Spring AI Chat</a>
             </ul>
         </div>
     </div>

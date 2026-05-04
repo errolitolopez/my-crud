@@ -2,6 +2,8 @@ name: my-crud-infra-stack
 
 # 1. Build & run
 # docker compose -f docker-compose-infra.yml up -d
+# 2. Pull model
+# docker exec -it ollama ollama pull llama3.2:1b
 
 services:
   postgres:
@@ -19,8 +21,21 @@ services:
     networks:
       - my-network
 
+  ollama:
+    container_name: ollama
+    image: ollama/ollama
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    networks:
+      - my-network
+    gpus: all
+
 volumes:
   postgres_data:
+  ollama_data:
 
 networks:
   my-network:
