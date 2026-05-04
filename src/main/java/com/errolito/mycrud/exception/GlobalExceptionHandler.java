@@ -14,6 +14,8 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -67,6 +69,20 @@ public class GlobalExceptionHandler {
         logException(e, request);
 
         return status(status).body(ApiResponse.error(title, detail, status.value()));
+    }
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    public Object handleNoResourceFound(NoResourceFoundException e, HttpServletRequest request) {
+        String path = request.getServletPath();
+
+        if (path.startsWith("/api")) {
+            HttpStatus status = HttpStatus.NOT_FOUND;
+            return ResponseEntity
+                    .status(status)
+                    .body(ApiResponse.error("Resource Not Found", "The requested resource was not found", status.value()));
+        }
+
+        return new ModelAndView("component/error/page-not-found");
     }
 
     @ExceptionHandler({
