@@ -13,9 +13,8 @@ public class AiChatPageController {
     @GetMapping("/spring-ai/chat")
     public String chat(Model model) {
         Map<String, String> llm = new LinkedHashMap<>() {{
-            put("Llama 3 (Meta AI)", "llama3.2:1b");
-            put("Phi 3 (Microsoft)", "phi3:3.8b");
-            put("Phi 3 Mini (Microsoft)", "phi3:mini");
+            put("Gemma 3 - 27b", "gemma-3-27b-it");
+            put("Gemini 2.5 Flash Lite", "gemini-2.5-flash-lite");
         }};
 
         model.addAttribute("models", llm);

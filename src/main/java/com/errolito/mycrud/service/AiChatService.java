@@ -10,7 +10,7 @@ import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.memory.MessageWindowChatMemory;
 import org.springframework.ai.chat.memory.repository.jdbc.JdbcChatMemoryRepository;
 import org.springframework.ai.chat.memory.repository.jdbc.JdbcChatMemoryRepositoryDialect;
-import org.springframework.ai.ollama.api.OllamaChatOptions;
+import org.springframework.ai.chat.prompt.ChatOptions;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,7 +41,6 @@ public class AiChatService {
                 .build();
 
         this.client = builder
-                .defaultSystem("You are a general knowledge assistant. Answer questions accurately and clearly. Be extremely concise and avoid unnecessary detail.")
                 .defaultAdvisors(MessageChatMemoryAdvisor.builder(chatMemory).build())
                 .build();
 
@@ -77,7 +76,7 @@ public class AiChatService {
     private ChatClient.ChatClientRequestSpec getAdvisors(AiChatRequest request) {
         return client.prompt()
                 .user(request.getMessage())
-                .options(OllamaChatOptions.builder().model(request.getModel()).build())
+                .options(ChatOptions.builder().model(request.getModel()).build())
                 .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, request.getConversationId()));
     }
 }
