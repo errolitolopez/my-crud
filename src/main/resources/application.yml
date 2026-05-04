@@ -4,12 +4,12 @@ spring:
   profiles:
     active: ${PROFILE:dev}
   ai:
-    ollama:
-      base-url: http://localhost:11434
-      chat:
-        options:
-          temperature: 1
-          num-ctx: 4096
+    google:
+      genai:
+        api-key: ${GEMINI_API_KEY}
+        chat:
+          options:
+            temperature: 1
     chat:
       memory:
         repository:
