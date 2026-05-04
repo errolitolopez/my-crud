@@ -35,6 +35,8 @@
         <postgresql.version>42.7.11</postgresql.version>
         <springdoc-openapi-starter-webmvc-ui.version>3.0.2</springdoc-openapi-starter-webmvc-ui.version>
         <s3.version>2.42.18</s3.version>
+        <spring-ai-starter-model-ollama.version>1.1.4</spring-ai-starter-model-ollama.version>
+        <spring-ai-version>2.0.0-M4</spring-ai-version>
     </properties>
 
     <dependencies>
@@ -53,6 +55,16 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-freemarker</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-starter-model-ollama</artifactId>
+            <version>${spring-ai-starter-model-ollama.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-starter-model-chat-memory-repository-jdbc</artifactId>
+            <version>2.0.0-M4</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
