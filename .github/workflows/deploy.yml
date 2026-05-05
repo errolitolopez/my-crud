@@ -1,74 +1,26 @@
-name: Deploy Backend to Amazon ECS
+name: Deploy Backend to EC2
 
 on:
   push:
-    branches: [ "aws" ]
-
-env:
-  AWS_REGION: ap-southeast-2
-  ECR_REPOSITORY: my-crud
-  ECS_SERVICE: my-crud-service
-  ECS_CLUSTER: my-crud-cluster
-  ECS_TASK_DEFINITION: .aws/task-definition.json
-  CONTAINER_NAME: my-crud
+    branches: [ "aws-ec2" ]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up JDK 21
-        uses: actions/setup-java@v4
+      - name: Deploy to EC2 via SSH
+        uses: appleboy/ssh-action@v1.0.0
         with:
-          java-version: '21'
-          distribution: 'temurin'
-          cache: maven
-
-      - name: Build with Maven
-        run: mvn clean package -DskipTests
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
-
-      - name: Inject Secrets into Task Definition
-        run: |
-          jq '(.containerDefinitions[].environment[] | select(.name == "SPRING_DATASOURCE_URL")).value = "${{ secrets.SPRING_DATASOURCE_URL }}"' .aws/task-definition.json > tmp.json && mv tmp.json .aws/task-definition.json
-          jq '(.containerDefinitions[].environment[] | select(.name == "SPRING_DATASOURCE_USERNAME")).value = "${{ secrets.SPRING_DATASOURCE_USERNAME }}"' .aws/task-definition.json > tmp.json && mv tmp.json .aws/task-definition.json
-          jq '(.containerDefinitions[].environment[] | select(.name == "SPRING_DATASOURCE_PASSWORD")).value = "${{ secrets.SPRING_DATASOURCE_PASSWORD }}"' .aws/task-definition.json > tmp.json && mv tmp.json .aws/task-definition.json
-          jq '(.containerDefinitions[].environment[] | select(.name == "GEMINI_API_KEY")).value = "${{ secrets.GEMINI_API_KEY }}"' .aws/task-definition.json > tmp.json && mv tmp.json .aws/task-definition.json
-
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v2
-
-      - name: Build, tag, and push image to Amazon ECR
-        id: build-image
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          IMAGE_TAG: ${{ github.sha }}
-        run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
-
-      - name: Fill in the new image ID in the Amazon ECS task definition
-        id: task-def
-        uses: aws-actions/amazon-ecs-render-task-definition@v1
-        with:
-          task-definition: ${{ env.ECS_TASK_DEFINITION }}
-          container-name: ${{ env.CONTAINER_NAME }}
-          image: ${{ steps.build-image.outputs.image }}
-
-      - name: Deploy Amazon ECS task definition
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-        with:
-          task-definition: ${{ steps.task-def.outputs.task-definition }}
-          service: ${{ env.ECS_SERVICE }}
-          cluster: ${{ env.ECS_CLUSTER }}
-          wait-for-service-stability: true
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd /home/ec2-user/my-crud
+            git pull origin aws-ec2
+            docker compose down
+            BUILD_NUMBER=$GITHUB_SHA docker compose up -d --build
+            docker restart nginx
