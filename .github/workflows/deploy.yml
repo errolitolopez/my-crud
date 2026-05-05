@@ -27,3 +27,4 @@ jobs:
             docker restart nginx
             
             docker images my-crud --format "{{.ID}}" | tail -n +4 | xargs -r docker rmi -f
+            docker builder prune -f
