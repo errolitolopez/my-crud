@@ -14,12 +14,15 @@ services:
       dockerfile: Dockerfile
     restart: unless-stopped
     ports:
-      - "8100:8080"
+      - "8080:8080"
+    env_file:
+      - .env
     environment:
-      INSTANCE_PORT: 8100
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/my_db
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: 123qwe
+      PORT: ${PORT}
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
     networks:
       - my-network
 
