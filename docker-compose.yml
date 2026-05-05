@@ -13,6 +13,8 @@ services:
       context: .
       dockerfile: Dockerfile
     restart: unless-stopped
+    mem_limit: 400m
+    memswap_limit: 400m
     ports:
       - "8080:8080"
     env_file:
