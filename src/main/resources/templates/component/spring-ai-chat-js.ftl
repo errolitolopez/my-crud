@@ -141,7 +141,9 @@
             stopBtn.classList.remove('d-none');
 
             const aiBubble = appendMessage('ai');
+            showTypingLoader(aiBubble);
             let fullContent = '';
+            let firstChunk = true;
 
             try {
                 const res = await fetch('/api/v1/ai/chat/stream', {
@@ -154,6 +156,10 @@
                     }),
                     signal: abortController.signal
                 });
+
+                if (!res.ok) {
+                    throw new Error(`HTTP ${res.status}`);
+                }
 
                 const reader = res.body.getReader();
                 const decoder = new TextDecoder();
@@ -174,12 +180,19 @@
                             if (raw.trim() === '[DONE]') continue;
                             fullContent += raw === '' ? '\n' : raw;
                         }
+                        if (firstChunk) { firstChunk = false; }
                         aiBubble.innerHTML = renderMarkdown(fullContent);
                     }
                 }
             } catch (e) {
                 if (e.name === 'AbortError') {
                     aiBubble.innerHTML += '<div class="text-warning mt-2 small border-top pt-1"><i>Generation stopped.</i></div>';
+                } else {
+                    aiBubble.innerHTML = `
+             <div class="d-flex align-items-center gap-2 text-danger">
+                 <i class="bi bi-exclamation-circle-fill"></i>
+                <span class="small">Failed to get a response. The AI model may be invalid or unavailable.</span>
+             </div>`;
                 }
             } finally {
                 sendBtn.classList.remove('d-none');
@@ -214,5 +227,9 @@
                 sendMessage();
             }
         });
+
+        function showTypingLoader(bubble) {
+            bubble.innerHTML = `<div class="spinner-grow spinner-grow-sm text-secondary" role="status"><span class="visually-hidden">Loading...</span></div>`;
+        }
     </script>
 </#noparse>
