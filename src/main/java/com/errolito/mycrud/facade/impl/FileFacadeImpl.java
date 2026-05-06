@@ -1,5 +1,6 @@
 package com.errolito.mycrud.facade.impl;
 
+import com.errolito.mycrud.cache.FileCacheStore;
 import com.errolito.mycrud.dto.FileQuery;
 import com.errolito.mycrud.dto.FileRequest;
 import com.errolito.mycrud.dto.FileResponse;
@@ -25,9 +26,10 @@ public class FileFacadeImpl
     protected FileFacadeImpl(
             FileMapper mapper,
             FileService service,
-            S3Service s3Service
+            S3Service s3Service,
+            FileCacheStore cacheStore
     ) {
-        super(mapper, service);
+        super(mapper, service, cacheStore);
         this.s3Service = s3Service;
         this.service = service;
     }
