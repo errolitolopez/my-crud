@@ -5,6 +5,10 @@
             <button class="btn border-0" id="themeToggle">
                 <i class="bi bi-sun-fill" id="themeIcon"></i>
             </button>
+
+            <button class="btn border-0" id="logoutBtn" onclick="logout()">
+                <i class="bi bi-box-arrow-right"></i>
+            </button>
         </div>
     </div>
 </nav>
@@ -15,6 +19,12 @@
             const html = document.documentElement;
             const themeToggle = document.getElementById('themeToggle');
             const themeIcon = document.getElementById('themeIcon');
+            const logoutBtn = document.getElementById('logoutBtn');
+
+            if (window.location.pathname === '/login') {
+                logoutBtn.style.display = 'none';
+            }
+
 
             const updateIcon = (theme) => {
                 themeIcon.className = theme === 'dark' ? 'bi bi-sun-fill' : 'bi bi-moon-fill';
@@ -32,5 +42,10 @@
             html.setAttribute('data-bs-theme', savedTheme);
             updateIcon(savedTheme);
         });
+
+        async function logout() {
+            await fetch("/api/v1/auth/logout", { method: "POST" });
+            window.location.replace("/login");
+        }
     </script>
 </#noparse>

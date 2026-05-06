@@ -30,7 +30,10 @@ public class SecurityConfig {
     private final JwtAuthFilter jwtAuthFilter;
     private final ObjectMapper objectMapper;
     private final CustomUserDetailsService customUserDetailsService;
-
+    private final OAuth2SuccessHandler oauth2SuccessHandler;
+    private final OAuth2FailureHandler oauth2FailureHandler;
+    private final OAuth2UserServiceImpl oauth2UserService;
+    private final CookieFilter cookieFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) {
@@ -53,8 +56,15 @@ public class SecurityConfig {
                         }
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(cookieFilter, JwtAuthFilter.class)
                 .exceptionHandling(exception
-                        -> exception.authenticationEntryPoint(customAuthenticationEntryPoint()));
+                        -> exception.authenticationEntryPoint(customAuthenticationEntryPoint()))
+                .oauth2Login(oauth2 -> oauth2
+                        .userInfoEndpoint(ui -> ui
+                                .userService(oauth2UserService))
+                        .successHandler(oauth2SuccessHandler)
+                        .failureHandler(oauth2FailureHandler)
+                );
 
         return http.build();
     }
@@ -67,6 +77,13 @@ public class SecurityConfig {
     @Bean
     public AuthenticationEntryPoint customAuthenticationEntryPoint() {
         return (request, response, ex) -> {
+
+            String path = request.getServletPath();
+            if (!path.startsWith("/api/v1/")) {
+                response.sendRedirect("/login");
+                return;
+            }
+
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");

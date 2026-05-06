@@ -40,7 +40,6 @@ public class User {
     @JoinColumn(name = "user_credential_id", foreignKey = @ForeignKey(name = "fk_user_credential_id"))
     private UserCredential userCredential;
 
-
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "user_roles",
@@ -55,4 +54,7 @@ public class User {
     )
     @BatchSize(size = 50)
     private Set<Role> roles = new HashSet<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<UserAuthProvider> userAuthProviders = new HashSet<>();
 }

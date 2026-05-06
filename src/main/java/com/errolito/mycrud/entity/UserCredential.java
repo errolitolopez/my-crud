@@ -21,7 +21,7 @@ public class UserCredential {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(nullable = false)
+    @Column
     private String encodedPassword;
 
     @CreatedDate

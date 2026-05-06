@@ -36,7 +36,10 @@ public class CustomUserDetailsService implements UserDetailsService {
         CustomUserDetails userDetails = new CustomUserDetails();
         userDetails.setId(user.getId());
         userDetails.setUsername(user.getUsername());
-        userDetails.setPassword(user.getUserCredential().getEncodedPassword());
+
+        if (user.getUserCredential() != null) {
+            userDetails.setPassword(user.getUserCredential().getEncodedPassword());
+        }
 
         Set<GrantedAuthority> authorities = Stream.concat(
                         user.getRoles().stream().map(role -> "ROLE_" + role),

@@ -11,6 +11,12 @@ public final class UrlProperties {
             "/api/v1/auth/**",
             "/swagger-ui/**",
             "/v3/api-docs/**",
+            "/favicon.ico",
+            "/css/**",
+            "/js/**",
+            "/styles.css",
+            "/login",
+            "/oauth2/**",
     };
 
     public static final Map<String, Set<HttpMethod>> PUBLIC_METHODS = Map.ofEntries(

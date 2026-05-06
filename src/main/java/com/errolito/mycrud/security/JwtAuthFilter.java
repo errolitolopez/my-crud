@@ -31,29 +31,36 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
+    protected void doFilterInternal(@NonNull HttpServletRequest request,
                                     @NonNull HttpServletResponse response,
                                     @NonNull FilterChain filterChain) throws ServletException, IOException {
 
-        log.debug("Processing authentication for request: {} {}", request.getMethod(), request.getServletPath());
+        try {
+            log.debug("Processing authentication for request: {} {}", request.getMethod(), request.getServletPath());
 
-        String authorization = request.getHeader("Authorization");
-        final String token = JwtUtils.extractToken(authorization);
+            String authorization = request.getHeader("Authorization");
+            final String token = JwtUtils.extractToken(authorization);
 
-        if (shouldAuthenticateUser(token)) {
-            Claims claims = JwtUtils.extractClaims(token, jwtSecret);
-            String username = claims.get("username", String.class);
+            if (shouldAuthenticateUser(token)) {
+                Claims claims = JwtUtils.extractClaims(token, jwtSecret);
+                String username = claims.get("username", String.class);
 
-            UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
+                UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
 
-            UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(
-                            userDetails,
-                            null,
-                            userDetails.getAuthorities()
-                    );
+                UsernamePasswordAuthenticationToken authentication =
+                        new UsernamePasswordAuthenticationToken(
+                                userDetails,
+                                null,
+                                userDetails.getAuthorities()
+                        );
 
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
+
+        } catch (Exception e) {
+            log.error("JWT Authentication failed for request [{}]: {}", request.getServletPath(), e.getMessage(), e);
+
+            SecurityContextHolder.clearContext();
         }
 
         filterChain.doFilter(request, response);
