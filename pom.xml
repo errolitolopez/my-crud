@@ -34,6 +34,7 @@
         <mapstruct.version>1.6.3</mapstruct.version>
         <postgresql.version>42.7.11</postgresql.version>
         <springdoc-openapi-starter-webmvc-ui.version>3.0.2</springdoc-openapi-starter-webmvc-ui.version>
+        <bucket4j-redis.version>8.10.1</bucket4j-redis.version>
     </properties>
 
     <dependencies>
@@ -101,6 +102,12 @@
             <groupId>net.logstash.logback</groupId>
             <artifactId>logstash-logback-encoder</artifactId>
             <version>${logstash-logback-encoder.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.bucket4j</groupId>
+            <artifactId>bucket4j-redis</artifactId>
+            <version>${bucket4j-redis.version}</version>
         </dependency>
 
         <dependency>

@@ -1,0 +1,8 @@
+rate-limit:
+  capacity: 10
+  refill: 6
+  rate-limits:
+    - url: /api/v1/users
+    - url: /users
+    - url: /users/create/form
+    - url: /users/edit/form

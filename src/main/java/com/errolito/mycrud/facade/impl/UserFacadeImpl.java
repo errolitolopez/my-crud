@@ -40,6 +40,7 @@ public class UserFacadeImpl
         User user = mapper.toEntity(userRequest);
 
         service.save(user);
+        clearCache();
         return mapper.toResponse(user);
     }
 
@@ -57,6 +58,7 @@ public class UserFacadeImpl
         mapper.fromRequest(userRequest, foundUser);
 
         service.save(foundUser);
+        clearCache(id);
         return mapper.toResponse(foundUser);
     }
 

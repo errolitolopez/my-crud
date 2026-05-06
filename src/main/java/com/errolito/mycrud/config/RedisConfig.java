@@ -38,7 +38,7 @@ public class RedisConfig {
                                         serializer
                                 )
                         )
-                        .entryTtl(Duration.ofMinutes(30));
+                        .entryTtl(Duration.ofMinutes(5));
 
         Map<String, RedisCacheConfiguration> cacheConfigs = new HashMap<>();
 
