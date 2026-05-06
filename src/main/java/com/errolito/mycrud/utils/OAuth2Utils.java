@@ -39,7 +39,7 @@ public final class OAuth2Utils {
         String email = (String) atrributes.get("email");
 
         if (email == null || email.isBlank()) {
-            email = atrributes.get("login") + "@github.local";
+            email = (String) atrributes.get("login");
         }
         return email;
     }

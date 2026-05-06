@@ -8,6 +8,7 @@ import com.errolito.mycrud.enums.AuthProvider;
 import com.errolito.mycrud.repository.RoleRepository;
 import com.errolito.mycrud.repository.UserAuthProviderRepository;
 import com.errolito.mycrud.repository.UserRepository;
+import com.errolito.mycrud.service.GitHubService;
 import com.errolito.mycrud.utils.OAuth2Utils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +34,7 @@ public class OAuth2UserServiceImpl implements OAuth2UserService<OAuth2UserReques
     private final UserRepository userRepository;
     private final UserAuthProviderRepository userAuthProviderRepository;
     private final RoleRepository roleRepository;
+    private final GitHubService gitHubService;
 
     @Override
     @Transactional
@@ -45,16 +47,16 @@ public class OAuth2UserServiceImpl implements OAuth2UserService<OAuth2UserReques
             Map<String, Object> attributes = oauth2User.getAttributes();
 
             String providerId = OAuth2Utils.extractProviderId(attributes, registrationId);
-            String email = OAuth2Utils.extractEmail(attributes);
+            String email = extractEmail(attributes, registrationId, request);
             String name = OAuth2Utils.extractName(attributes);
 
-            resolveUser(email, name, provider, providerId);
+            User user = resolveUser(email, name, provider, providerId);
 
-            return oauth2User;
+            return new CustomOAuth2User(oauth2User, user, provider);
     }
 
-    private void resolveUser(String email, String name, AuthProvider provider, String providerId) {
-        userAuthProviderRepository
+    private User resolveUser(String email, String name, AuthProvider provider, String providerId) {
+        return userAuthProviderRepository
                 .findByProviderAndProviderId(provider, providerId)
                 .map(UserAuthProvider::getUser)
                 .orElseGet(() -> userRepository.findByUsername(email)
@@ -99,5 +101,19 @@ public class OAuth2UserServiceImpl implements OAuth2UserService<OAuth2UserReques
         user.getUserAuthProviders().add(userAuthProvider);
 
         return userRepository.save(user);
+    }
+
+    private String extractEmail(Map<String, Object> atrributes, String registrationId, OAuth2UserRequest request) {
+        String email = null;
+
+        if ("github".equals(registrationId)) {
+            email = gitHubService.fetchPrimaryEmail(request.getAccessToken().getTokenValue());
+        }
+
+        if (email == null) {
+            email = OAuth2Utils.extractEmail(atrributes);
+        }
+
+        return email;
     }
 }

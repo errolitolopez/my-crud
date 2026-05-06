@@ -3,7 +3,6 @@ package com.errolito.mycrud.security;
 import com.errolito.mycrud.entity.User;
 import com.errolito.mycrud.mapper.RoleMapper;
 import com.errolito.mycrud.repository.UserRepository;
-import com.errolito.mycrud.utils.OAuth2Utils;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -18,7 +17,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @Component
@@ -39,14 +41,11 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
                                         @NonNull HttpServletResponse response,
                                         @NonNull Authentication authentication) throws IOException {
 
+        CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal();
 
-        OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
-
-        Map<String, Object> attributes = Optional.ofNullable(oAuth2User)
-                .map(OAuth2User::getAttributes)
-                .orElse(Collections.emptyMap());
-
-        String email = OAuth2Utils.extractEmail(attributes);
+        String email = Optional.ofNullable(oAuth2User)
+                .map(CustomOAuth2User::getEmail)
+                .orElse(null);
 
         User user = userRepository.findByUsername(email).orElse(null);
 
