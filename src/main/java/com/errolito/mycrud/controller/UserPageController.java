@@ -1,8 +1,8 @@
 package com.errolito.mycrud.controller;
 
 import com.errolito.mycrud.dto.UserQuery;
-import com.errolito.mycrud.entity.User;
-import com.errolito.mycrud.service.UserService;
+import com.errolito.mycrud.dto.UserResponse;
+import com.errolito.mycrud.facade.UserFacade;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.data.domain.Page;
@@ -22,11 +22,11 @@ import static java.lang.Integer.parseInt;
 @RequiredArgsConstructor
 public class UserPageController {
 
-    private final UserService service;
+    private final UserFacade facade;
 
     @GetMapping("/users")
     public String list(Model model, UserQuery query, Pageable pageable) {
-        Page<User> page = service.findAll(query, pageable);
+        Page<UserResponse> page = facade.findAll(query, pageable);
         model.addAttribute("page", page);
         model.addAttribute("username", query.getUsername());
         return "core/users/list";
@@ -43,7 +43,7 @@ public class UserPageController {
                 return "component/error/record-not-found";
             }
 
-            Optional<User> userOptional = service.findById(parseInt(id));
+            Optional<UserResponse> userOptional = facade.findById(parseInt(id));
 
             if (userOptional.isPresent()) {
                 model.addAttribute("user", userOptional.get());

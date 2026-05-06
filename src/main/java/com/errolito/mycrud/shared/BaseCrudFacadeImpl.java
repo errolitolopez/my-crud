@@ -129,11 +129,11 @@ public abstract class BaseCrudFacadeImpl<I, Q, R, E, T> implements BaseCrudFacad
         clearCache(id);
     }
 
-    private void clearCache() {
+    public void clearCache() {
         clearCache(null);
     }
 
-    private void clearCache(I id) {
+    public void clearCache(I id) {
         if (cacheConfig().isCacheable()) {
             if (id != null) {
                 cacheStore.remove(cacheConfig().getName(), id);
