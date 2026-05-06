@@ -24,8 +24,8 @@ spring:
       add-mappings: true
   data:
     redis:
-      host: localhost
-      port: 6379
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
 
 server:
   port: ${PORT:8080}
