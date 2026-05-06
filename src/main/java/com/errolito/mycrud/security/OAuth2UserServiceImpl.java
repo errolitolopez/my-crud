@@ -8,6 +8,7 @@ import com.errolito.mycrud.enums.AuthProvider;
 import com.errolito.mycrud.repository.RoleRepository;
 import com.errolito.mycrud.repository.UserAuthProviderRepository;
 import com.errolito.mycrud.repository.UserRepository;
+import com.errolito.mycrud.utils.OAuth2Utils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -43,9 +44,9 @@ public class OAuth2UserServiceImpl implements OAuth2UserService<OAuth2UserReques
 
             Map<String, Object> attributes = oauth2User.getAttributes();
 
-            String providerId = extractProviderId(attributes, registrationId);
-            String email = extractEmail(attributes);
-            String name = extractName(attributes);
+            String providerId = OAuth2Utils.extractProviderId(attributes, registrationId);
+            String email = OAuth2Utils.extractEmail(attributes);
+            String name = OAuth2Utils.extractName(attributes);
 
             resolveUser(email, name, provider, providerId);
 
@@ -98,21 +99,5 @@ public class OAuth2UserServiceImpl implements OAuth2UserService<OAuth2UserReques
         user.getUserAuthProviders().add(userAuthProvider);
 
         return userRepository.save(user);
-    }
-
-    private String extractEmail(Map<String, Object> attrs) {
-        return (String) attrs.get("email");
-    }
-
-    private String extractName(Map<String, Object> attrs) {
-        return (String) attrs.get("name");
-    }
-
-    private String extractProviderId(Map<String, Object> attrs, String registrationId) {
-        return switch (registrationId) {
-            case "google" -> String.valueOf(attrs.get("sub"));
-            case "facebook" -> String.valueOf(attrs.get("id"));
-            default -> throw new IllegalStateException("Unknown provider: " + registrationId);
-        };
     }
 }

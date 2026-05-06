@@ -32,6 +32,11 @@
                     <i class="bi bi-facebook"></i>
                     Continue with Facebook
                 </a>
+
+                <a href="/oauth2/authorization/github" class="list-group-item list-group-item-action">
+                    <i class="bi bi-github"></i>
+                    Continue with GitHub
+                </a>
             </ul>
 
             <hr class="border-secondary my-4">

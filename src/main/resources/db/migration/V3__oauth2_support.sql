@@ -9,7 +9,7 @@ create table user_auth_providers
     user_id      integer,
     created_date timestamp(6) with time zone default NOW()   not null,
     email        varchar(255),
-    provider     varchar(255)                default 'LOCAL' not null check ((provider in ('LOCAL', 'GOOGLE', 'FACEBOOK'))),
+    provider     varchar(255)                default 'LOCAL' not null check ((provider in ('LOCAL', 'GOOGLE', 'FACEBOOK', 'GITHUB'))),
     provider_id  varchar(255),
     primary key (id),
     unique (provider, provider_id)
