@@ -22,4 +22,7 @@ public interface AccountRepository extends JpaRepository<Account, Integer>, JpaS
 
     @EntityGraph(attributePaths = {"customer"})
     List<Account> findAllByAccountNumberIn(List<String> accountNumbers);
+
+    @EntityGraph(attributePaths = {"customer"})
+    List<Account> findAllByAccountNumberNotInOrderByCustomerFullNameAsc(List<String> accountNumbers);
 }

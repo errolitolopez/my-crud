@@ -62,4 +62,9 @@ public class AccountServiceImpl
     public List<Account> findAllByAccountNumberIn(List<String> accountNumbers) {
         return repository.findAllByAccountNumberIn(accountNumbers);
     }
+
+    @Override
+    public List<Account> findAllByAccountNumberNotIn(List<String> accountNumbers) {
+        return repository.findAllByAccountNumberNotInOrderByCustomerFullNameAsc(accountNumbers);
+    }
 }

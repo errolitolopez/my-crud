@@ -22,16 +22,18 @@ public class CustomerServiceImpl
     }
 
     @Override
-    protected Specification<Customer> buildLikeSpec(CustomerQuery userQuery) {
+    protected Specification<Customer> buildLikeSpec(CustomerQuery query) {
         return (root, criteriaQuery, builder) ->
                 SpecBuilder.of(root, builder)
+                        .andLike("fullName", query.getFullName())
                         .build();
     }
 
     @Override
-    protected Specification<Customer> buildEqualSpec(CustomerQuery userQuery) {
+    protected Specification<Customer> buildEqualSpec(CustomerQuery query) {
         return (root, criteriaQuery, builder) ->
                 SpecBuilder.of(root, builder)
+                        .andEqual("fullName", query.getFullName())
                         .build();
     }
 

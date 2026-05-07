@@ -60,5 +60,8 @@ create table notifications
 );
 create index idx_fund_transfer_audit_reference_id on fund_transfer_audits (reference_id);
 create index idx_fund_transfer_audit_reference_id_audit_type on fund_transfer_audits (reference_id, audit_type);
+create index idx_fund_transfer_audit_origin_acccount_number on fund_transfer_audits (origin_account_number);
+create index idx_fund_transfer_audit_destination_acccount_number on fund_transfer_audits (destination_account_number);
+create index idx_fund_transfer_created_date on fund_transfer_audits (created_date desc);
 alter table if exists accounts add constraint fk_customer_id foreign key (customer_id) references customers;
 alter table if exists notifications add constraint fk_customer_id foreign key (customer_id) references customers;

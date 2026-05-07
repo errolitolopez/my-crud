@@ -18,7 +18,10 @@ import java.time.Instant;
         name = "fund_transfer_audits",
         indexes = {
                 @Index(name = "idx_fund_transfer_audit_reference_id", columnList = "referenceId"),
-                @Index(name = "idx_fund_transfer_audit_reference_id_audit_type", columnList = "referenceId,auditType")
+                @Index(name = "idx_fund_transfer_audit_reference_id_audit_type", columnList = "referenceId,auditType"),
+                @Index(name = "idx_fund_transfer_audit_origin_acccount_number", columnList = "originAccountNumber"),
+                @Index(name = "idx_fund_transfer_audit_destination_acccount_number", columnList = "destinationAccountNumber"),
+                @Index(name = "idx_fund_transfer_created_date", columnList = "createdDate DESC")
         }
 )
 @Builder

@@ -10,7 +10,9 @@ import com.errolito.mycrud.shared.SpecBuilder;
 import io.github.uncaughterrol.commons.exception.ExceptionFactory;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.function.Supplier;
 
 @Service
@@ -60,5 +62,11 @@ public class FundTransferAuditServiceImpl
                 .build();
 
         return existsByQuery(query);
+    }
+
+    @Override
+    @Transactional
+    public List<FundTransferAudit> findAllByAccountNumber(String accountNumber) {
+        return repository.findAllByAccountNumber(accountNumber);
     }
 }

@@ -14,4 +14,6 @@ public interface AccountService extends BaseCrudService<Integer, AccountQuery, A
     void updateAccountBalance(String originAccountNumber, BigDecimal accountBalance);
 
     List<Account> findAllByAccountNumberIn(List<String> accountNumbers);
+
+    List<Account> findAllByAccountNumberNotIn(List<String> accountNumbers);
 }
