@@ -21,8 +21,9 @@
     <div class="row">
         <div class="col-12">
             <ul class="list-group">
-                <a href="/users" class="list-group-item list-group-item-action">Users</a>
                 <a href="/spring-ai/chat" class="list-group-item list-group-item-action">Spring AI Chat</a>
+                <a href="/users" class="list-group-item list-group-item-action">Crud - Users</a>
+                <a href="/files" class="list-group-item list-group-item-action">AWS S3 - File Upload</a>
             </ul>
         </div>
     </div>

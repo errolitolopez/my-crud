@@ -66,9 +66,10 @@ public class FileFacadeImpl
             delete(file);
         }
 
+        mapper.fromRequest(request, file);
+
         file.setUrl(upload(request));
 
-        mapper.fromRequest(request, file);
         service.save(file);
 
         return mapper.toResponse(file);

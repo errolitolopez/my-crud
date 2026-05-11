@@ -201,3 +201,9 @@ values (1, 'darlena_runte'),
        (98, 'tanika_satterfield'),
        (99, 'dominique_bosco'),
        (100, 'charlie_beer');
+
+insert into files (name, slug, url)
+VALUES
+    ('errolito_lopez_resume.pdf', 'files', 'https://amzn-s3-my-crud-bucket.s3.ap-southeast-2.amazonaws.com/public/files/errolito_lopez_resume.pdf'),
+    ('sample_local_pdf.pdf', 'files', 'https://amzn-s3-my-crud-bucket.s3.ap-southeast-2.amazonaws.com/public/files/sample_local_pdf.pdf'),
+    ('dog.jpg', 'files', 'https://amzn-s3-my-crud-bucket.s3.ap-southeast-2.amazonaws.com/public/files/dog.jpg');

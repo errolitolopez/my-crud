@@ -59,10 +59,6 @@ public class RateLimitService {
             cacheStore.save("rate-limit", "list", rateLimits);
         }
 
-        for (RateLimit rateLimit : rateLimits) {
-            System.out.println(rateLimit);
-        }
-
         return rateLimits;
     }
 

@@ -14,6 +14,7 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
@@ -83,6 +84,15 @@ public class GlobalExceptionHandler {
         }
 
         return new ModelAndView("component/error/page-not-found");
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<ApiResponse<Void>> handleMaxUploadSizeExceededException(MaxUploadSizeExceededException e, HttpServletRequest request) {
+        HttpStatus status = CONTENT_TOO_LARGE;
+        String title = "File Too Large";
+        String detail = "File exceeds the 10 MB limit.";
+        logException(e, request);
+        return status(status).body(ApiResponse.error(title, detail, status.value()));
     }
 
     @ExceptionHandler({
