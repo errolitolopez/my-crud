@@ -10,6 +10,7 @@ spring:
         chat:
           options:
             temperature: 1
+            thinking-level: minimal
     chat:
       memory:
         repository:
