@@ -4,6 +4,7 @@ import com.errolito.mycrud.dto.AiChatHistoryResponse;
 import com.errolito.mycrud.dto.AiChatRequest;
 import com.errolito.mycrud.mapper.AiChatHistoryMapper;
 import com.errolito.mycrud.repository.AiChatRepository;
+import com.errolito.mycrud.tools.UserAgentTools;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
@@ -11,12 +12,16 @@ import org.springframework.ai.chat.memory.MessageWindowChatMemory;
 import org.springframework.ai.chat.memory.repository.jdbc.JdbcChatMemoryRepository;
 import org.springframework.ai.chat.memory.repository.jdbc.JdbcChatMemoryRepositoryDialect;
 import org.springframework.ai.chat.prompt.ChatOptions;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 
 import javax.sql.DataSource;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @Service
@@ -28,8 +33,14 @@ public class AiChatService {
     public AiChatService(
             AiChatRepository repository,
             ChatClient.Builder builder,
-            DataSource dataSource, AiChatHistoryMapper mapper
-    ) {
+            DataSource dataSource,
+            AiChatHistoryMapper mapper,
+            UserAgentTools userAgentTools,
+            @Value("classpath:prompts/user-agent.md")
+            Resource systemPromptResource) throws IOException {
+
+        String systemPrompt = systemPromptResource.getContentAsString(StandardCharsets.UTF_8);
+
         JdbcChatMemoryRepository memoryRepository = JdbcChatMemoryRepository.builder()
                 .jdbcTemplate(new JdbcTemplate(dataSource))
                 .dialect(JdbcChatMemoryRepositoryDialect.from(dataSource))
@@ -41,6 +52,8 @@ public class AiChatService {
                 .build();
 
         this.client = builder
+                .defaultSystem(systemPrompt)
+                .defaultTools(userAgentTools)
                 .defaultAdvisors(MessageChatMemoryAdvisor.builder(chatMemory).build())
                 .build();
 

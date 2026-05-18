@@ -9,7 +9,9 @@ import com.errolito.mycrud.shared.SpecBuilder;
 import io.github.uncaughterrol.commons.exception.ExceptionFactory;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
 import java.util.function.Supplier;
 
 @Service
@@ -40,5 +42,11 @@ public class UserServiceImpl
     @Override
     protected Supplier<RuntimeException> notFoundException() {
         return () -> ExceptionFactory.notFound("User not found");
+    }
+
+    @Override
+    @Transactional
+    public Optional<User> findByUsername(String username) {
+        return repository.findByUsername(username);
     }
 }
