@@ -11,16 +11,23 @@ import com.errolito.mycrud.mapper.UserMapper;
 import com.errolito.mycrud.service.UserService;
 import com.errolito.mycrud.shared.BaseCrudFacadeImpl;
 import io.github.uncaughterrol.commons.exception.ExceptionFactory;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Optional;
 
 @Component
 public class UserFacadeImpl
         extends BaseCrudFacadeImpl<Integer, UserQuery, UserRequest, User, UserResponse>
         implements UserFacade {
 
+    private final UserService service;
+
     protected UserFacadeImpl(UserMapper mapper, UserService service, CacheStore<UserResponse> cacheStore) {
         super(mapper, service, cacheStore);
+        this.service = service;
     }
 
     private final CacheConfig cacheConfig = new CacheConfig("user", true);
@@ -67,5 +74,28 @@ public class UserFacadeImpl
         if (service.existsByQuery(UserQuery.builder().username(username).build())) {
             throw ExceptionFactory.alreadyExists("Username already exists");
         }
+    }
+
+    @Override
+    @Transactional
+    public Optional<UserResponse> findByUsername(String username) {
+        return service.findByUsername(username)
+                .map(mapper::toResponse);
+    }
+
+    @Override
+    @Transactional
+    public UserResponse update(UserRequest request) {
+        return service.findByUsername(request.getUsername())
+                .map(u -> update(u.getId(), request))
+                .orElseThrow(() -> ExceptionFactory.notFound("User not found"));
+    }
+
+    @Override
+    public List<UserResponse> findAll() {
+        return service.findAll(new UserQuery(), Pageable.ofSize(1000)).getContent()
+                .stream()
+                .map(mapper::toResponse)
+                .toList();
     }
 }

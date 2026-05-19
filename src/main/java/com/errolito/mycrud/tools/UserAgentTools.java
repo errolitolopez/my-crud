@@ -1,11 +1,13 @@
 package com.errolito.mycrud.tools;
 
-import com.errolito.mycrud.dto.UserQuery;
-import com.errolito.mycrud.entity.User;
-import com.errolito.mycrud.service.UserService;
+import com.errolito.mycrud.dto.UserRequest;
+import com.errolito.mycrud.dto.UserResponse;
+import com.errolito.mycrud.facade.UserFacade;
+import io.github.uncaughterrol.commons.exception.ApiException;
+import io.github.uncaughterrol.commons.exception.ResourceAlreadyExistsException;
+import io.github.uncaughterrol.commons.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ai.tool.annotation.Tool;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -13,67 +15,87 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class UserAgentTools {
-    private final UserService userService;
+    private final UserFacade userFacade;
 
     @Tool(description = "Find a user by their username. Returns user ID, username, full name, and account creation date.")
     public String getUserByUsername(String username) {
-        return userService.findByUsername(username)
-                .map(u -> {
-                    String fullName = u.getUserProfile() != null
-                            ? u.getUserProfile().getFullName()
-                            : "No profile found";
-                    return "User found — ID: " + u.getId()
-                            + ", Username: " + u.getUsername()
-                            + ", Full name: " + fullName
-                            + ", Member since: " + u.getCreatedDate();
-                })
+        return userFacade.findByUsername(username)
+                .map(u -> "User found — ID: " + u.getId()
+                        + ", Username: " + u.getUsername()
+                        + ", Full name: " + u.getUserProfile().getFullName()
+                        + ", Member since: " + u.getCreatedDate())
                 .orElse("No user found with username: " + username);
     }
 
     @Tool(description = "Find a user by their ID. Returns user details including their profile.")
     public String getUserById(Integer id) {
-        return userService.findById(id)
-                .map(u -> {
-                    String fullName = u.getUserProfile() != null
-                            ? u.getUserProfile().getFullName()
-                            : "No profile found";
-                    return "User found — ID: " + u.getId()
-                            + ", Username: " + u.getUsername()
-                            + ", Full name: " + fullName
-                            + ", Member since: " + u.getCreatedDate();
-                })
+        return userFacade.findById(id)
+                .map(u -> "User found — ID: " + u.getId()
+                        + ", Username: " + u.getUsername()
+                        + ", Full name: " + u.getUserProfile().getFullName()
+                        + ", Member since: " + u.getCreatedDate())
                 .orElse("No user found with ID: " + id);
     }
 
     @Tool(description = "List all registered users. Returns a summary of all users and their profiles.")
     public String getAllUsers() {
-        List<User> users = userService.findAll(new UserQuery(), Pageable.unpaged()).getContent();
+        List<UserResponse> users = userFacade.findAll();
         if (users.isEmpty()) return "No users registered yet.";
 
         StringBuilder sb = new StringBuilder("Registered users:\n");
-        for (User u : users) {
-            String fullName = u.getUserProfile() != null
-                    ? u.getUserProfile().getFullName()
-                    : "No profile";
+        for (UserResponse u : users) {
             sb.append("- ID: ").append(u.getId())
                     .append(", Username: ").append(u.getUsername())
-                    .append(", Full name: ").append(fullName)
+                    .append(", Full name: ").append(u.getUserProfile().getFullName())
                     .append("\n");
         }
         return sb.toString();
     }
 
-    @Tool(description = "Update the full name of a user's profile by their username.")
-    public String updateFullName(String username, String newFullName) {
-        return userService.findByUsername(username)
-                .map(u -> {
-                    if (u.getUserProfile() == null) {
-                        return "User " + username + " has no profile to update.";
-                    }
+    @Tool(description = "Create a new user with a username and full name. Fails if the username is already taken.")
+    public String createUser(String username, String fullName) {
+        try {
+            UserRequest request = UserRequest.builder()
+                    .username(username)
+                    .fullName(fullName)
+                    .build();
 
-                    u.getUserProfile().setFullName(newFullName);
-                    userService.save(u);
-                    return "Full name updated to '" + newFullName + "' for user: " + username;
+            userFacade.save(request);
+            return "User created — Username: " + username + ", Full name: " + fullName;
+
+        } catch (ResourceAlreadyExistsException e) {
+            return "Username '" + username + "' is already taken. Please choose a different username.";
+        }
+    }
+
+    @Tool(description = "Update the username and/or full name of an existing user. Provide the current username to look them up, then supply the new values.")
+    public String updateUser(String username, String fullName) {
+        try {
+            UserRequest request = UserRequest.builder()
+                    .username(username)
+                    .fullName(fullName)
+                    .build();
+
+            userFacade.update(request);
+            return "User created — Username: " + username + ", Full name: " + fullName;
+
+        } catch (ApiException e) {
+            return switch (e) {
+                case ResourceAlreadyExistsException ignored ->
+                        "Username '" + username + "' is already taken. Please choose a different username.";
+                case ResourceNotFoundException ignored -> "No user found with username: " + username;
+                default ->
+                        "An unexpected error occurred while updating user '" + username + "'. Please try again later.";
+            };
+        }
+    }
+
+    @Tool(description = "Delete a user by their username. This action is irreversible.")
+    public String deleteUserByUsername(String username) {
+        return userFacade.findByUsername(username)
+                .map(u -> {
+                    userFacade.deleteById(u.getId());
+                    return "User '" + username + "' has been successfully deleted.";
                 })
                 .orElse("No user found with username: " + username);
     }
