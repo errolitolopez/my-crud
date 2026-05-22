@@ -21,7 +21,29 @@
     <div class="row mb-3">
         <div class="col-12 d-flex justify-content-between align-items-center">
             <h1 class="display-5 fw-bold">Users</h1>
-            <a href="/users/create/form" class="btn btn-primary">New User</a>
+            <div class="d-flex gap-2">
+                <div class="dropdown">
+                    <button class="btn btn-success dropdown-toggle" type="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                        Export
+                    </button>
+
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li>
+                            <a class="dropdown-item" href="#" onclick="exportReport('PDF')">
+                                Export PDF
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="#" onclick="exportReport('XLSX')">
+                                Export Excel
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <a href="/users/create/form" class="btn btn-primary">New User</a>
+            </div>
         </div>
     </div>
     <div class="row mb-3">
@@ -186,6 +208,50 @@
                 pendingDeleteId = null;
             }
         });
+
+        async function exportReport(format) {
+            const urlParams = new URLSearchParams(window.location.search);
+
+            const username = urlParams.get("username") || "";
+            const page = urlParams.get("page") || 0;
+            const size = urlParams.get("size") || 20;
+
+            const params = new URLSearchParams();
+            params.set("username", username);
+            params.set("format", format);
+            params.set("page", page);
+            params.set("size", size);
+
+            const url = `/api/v1/reports/users?${params.toString()}`;
+
+            try {
+                const response = await fetch(url);
+
+                if (!response.ok) {
+                    throw new Error("Export failed");
+                }
+
+                const blob = await response.blob();
+
+                const contentDisposition = response.headers.get("Content-Disposition");
+                let filename = "report";
+
+                if (contentDisposition) {
+                    const match = contentDisposition.match(/filename="(.+)"/);
+                    if (match) filename = match[1];
+                }
+
+                const link = document.createElement("a");
+                link.href = window.URL.createObjectURL(blob);
+                link.download = filename;
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+
+            } catch (e) {
+                alert("Export failed");
+            }
+        }
     </script>
 </#noparse>
 </html>
