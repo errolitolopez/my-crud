@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,7 +27,8 @@ public class UserPageController {
     private final UserFacade facade;
 
     @GetMapping("/users")
-    public String list(Model model, UserQuery query, Pageable pageable) {
+    public String list(Model model, UserQuery query,
+                       @PageableDefault(sort = "createdDate", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<UserResponse> page = facade.findAll(query, pageable);
         model.addAttribute("page", page);
         model.addAttribute("username", query.getUsername());

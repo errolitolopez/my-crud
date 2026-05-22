@@ -71,11 +71,14 @@
                 <#list page.content as user>
                     <li class="list-group-item d-flex justify-content-between align-items-center"
                         id="user-row-${user.id}">
-                        <div>
+                        <div class="col-4">
                             <h6 class="mb-1">${user.getUserProfile().fullName}</h6>
                             <small class="text-muted">${user.username}</small>
                         </div>
-                        <div>
+                        <div class="col-4 text-center">
+                            <small class="text-muted" data-date="${user.createdDate}"></small>
+                        </div>
+                        <div class="col-4 text-end">
                             <a href="/users/edit/form?id=${user.id}"
                                class="btn btn-sm btn-outline-primary me-1">Edit</a>
                             <button
@@ -162,6 +165,16 @@
                 document.getElementById('deleteUserName').textContent = this.dataset.name;
                 deleteModal.show();
             });
+        });
+
+        document.querySelectorAll("[data-date]").forEach(el => {
+            const d = new Date(el.dataset.date);
+            el.textContent = d.getFullYear() + "-" +
+                String(d.getMonth() + 1).padStart(2, "0") + "-" +
+                String(d.getDate()).padStart(2, "0") + " " +
+                String(d.getHours()).padStart(2, "0") + ":" +
+                String(d.getMinutes()).padStart(2, "0") + ":" +
+                String(d.getSeconds()).padStart(2, "0");
         });
 
         document.getElementById('confirmDeleteBtn').addEventListener('click', async function () {
