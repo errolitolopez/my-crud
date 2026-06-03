@@ -1,6 +1,7 @@
 package com.errolito.mycrud.facade.impl;
 
 import com.errolito.mycrud.cache.FileCacheStore;
+import com.errolito.mycrud.dto.FileProxyResponse;
 import com.errolito.mycrud.dto.FileQuery;
 import com.errolito.mycrud.dto.FileRequest;
 import com.errolito.mycrud.dto.FileResponse;
@@ -12,6 +13,8 @@ import com.errolito.mycrud.service.S3Service;
 import com.errolito.mycrud.shared.BaseCrudFacadeImpl;
 import io.github.uncaughterrol.commons.exception.ExceptionFactory;
 import org.springframework.stereotype.Component;
+import software.amazon.awssdk.core.ResponseInputStream;
+import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 
 import java.util.Optional;
 
@@ -82,6 +85,19 @@ public class FileFacadeImpl
         service.delete(file);
     }
 
+    @Override
+    public FileProxyResponse getFileProxy(Integer id) {
+        File file = service.getById(id);
+        ResponseInputStream<GetObjectResponse> stream = s3Service.streamObject(getKeyFromFile(file));
+        return FileProxyResponse
+                .builder()
+                .inputStream(stream)
+                .contentType(stream.response().contentType())
+                .filename(file.getName())
+                .etag(stream.response().eTag())
+                .build();
+    }
+
     private String upload(FileRequest request) {
         try {
             return s3Service.upload(getKeyFromRequest(request), request.getFile());
@@ -102,7 +118,7 @@ public class FileFacadeImpl
     }
 
     private void delete(File file) {
-        delete("public/" + file.getSlug() + "/" + file.getName());
+        delete(getKeyFromFile(file));
     }
 
     private void delete(FileRequest request) {
@@ -110,6 +126,14 @@ public class FileFacadeImpl
     }
 
     private String getKeyFromRequest(FileRequest request) {
-        return "public/" + request.getSlug() + "/" + request.getName();
+        return buildKey(request.getSlug(), request.getName());
+    }
+
+    private String getKeyFromFile(File file) {
+        return buildKey(file.getSlug(), file.getName());
+    }
+
+    private String buildKey(String slug, String name) {
+        return "public/" + slug + "/" + name;
     }
 }

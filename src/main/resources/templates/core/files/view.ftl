@@ -92,7 +92,7 @@
                     <i class="bi bi-file-earmark fs-1 text-secondary"></i>
                     <p class="mt-3 mb-1 fw-medium">Preview not available</p>
                     <p class="text-muted small mb-3">This file type cannot be previewed in the browser.</p>
-                    <a href="${file.url}" download="${file.name}" class="btn btn-primary">
+                    <a href="/api/v1/files/${file.id}/proxy" download="${file.name}" class="btn btn-primary">
                         <i class="bi bi-download me-1"></i> Download file
                     </a>
                 </div>
@@ -119,7 +119,7 @@
 <#include "*/component/js.ftl">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.min.mjs" type="module"></script>
 <script type="module">
-    const FILE_URL  = '${file.url}';
+    const FILE_URL  = '/api/v1/files/${file.id}/proxy';
     const FILE_NAME = '${file.name}';
     const ext = FILE_NAME.split('.').pop().toLowerCase();
 

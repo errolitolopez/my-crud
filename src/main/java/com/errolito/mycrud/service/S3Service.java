@@ -3,9 +3,12 @@ package com.errolito.mycrud.service;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 @Service
@@ -34,6 +37,15 @@ public class S3Service {
     public void delete(String key) {
         s3Client.deleteObject(
                 DeleteObjectRequest.builder()
+                        .bucket(bucket)
+                        .key(key)
+                        .build()
+        );
+    }
+
+    public ResponseInputStream<GetObjectResponse> streamObject(String key) {
+        return s3Client.getObject(
+                GetObjectRequest.builder()
                         .bucket(bucket)
                         .key(key)
                         .build()
